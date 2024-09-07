@@ -3,10 +3,12 @@ package practice.application.models;
 
 import jakarta.persistence.*;
 import lombok.AccessLevel;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@Getter
 @Table(name = "order_items")
 public class OrdersItemEntity extends BaseEntity {
 
