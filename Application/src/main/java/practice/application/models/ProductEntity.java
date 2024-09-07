@@ -5,6 +5,7 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import practice.application.models.enumType.Category;
+import practice.application.models.exception.NoStockException;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -49,6 +50,13 @@ public class ProductEntity extends BaseEntity{
     }
 
     public void removeQuantity(int quantity) {
-        this.quantity -= quantity;
+        int result = this.quantity - quantity;
+
+        if(result <0) {
+            throw new NoStockException(this.getProductName() + "의 제고가 다 떨어졌습니다");
+        }
+
+        this.quantity = result;
+
     }
 }

@@ -5,6 +5,7 @@ import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import practice.application.models.enumType.Category;
 
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -17,7 +18,8 @@ public class OrdersItemEntity extends BaseEntity {
     @Column(name = "order_item_id" )
     private Long id;
 
-    private String category;
+    @Enumerated(EnumType.STRING)
+    private Category category;
 
     private int price;
 
@@ -33,4 +35,24 @@ public class OrdersItemEntity extends BaseEntity {
     private ProductEntity product;
 
 
+    public void addOrderItem( ProductEntity product) {
+        this.product = product;
+        product.getOrdersItems().add(this);
+    }
+
+    public int calculatePrice(ProductEntity productEntity){  // 해당 주문 가격
+        return productEntity.getPrice() * quantity;
+    }
+
+    public void addOrderEntity(OrderEntity orderEntity) {
+        this.order = orderEntity;
+    }
+
+    public OrdersItemEntity( int quantity,  ProductEntity product) {
+        this.category = product.getCategory();
+        this.quantity = quantity; //주문 수량
+        this.price = calculatePrice(product);
+        addOrderItem(product);
+        product.removeQuantity(quantity);
+    }
 }
