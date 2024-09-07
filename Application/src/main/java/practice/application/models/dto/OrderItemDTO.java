@@ -19,7 +19,7 @@ public class OrderItemDTO implements DTOContracts<OrderItemEntity> {
     private long id;
     private OrderDTO orderDTO;
     private ProductDTO productDTO;
-    private String category;
+    private OrderItemCategory category;
     private long price;
     private int quantity;
     private Instant createdAt;
@@ -31,7 +31,7 @@ public class OrderItemDTO implements DTOContracts<OrderItemEntity> {
         entity.setId(id)
               .setOrderEntity(orderDTO.toEntity())
               .setProductEntity(productDTO.toEntity())
-              .setCategory(category)
+              .setCategory(category.toString())
               .setPrice(price)
               .setQuantity(quantity)
               .setCreatedAt(createdAt);

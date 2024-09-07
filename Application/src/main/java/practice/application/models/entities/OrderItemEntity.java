@@ -9,6 +9,7 @@ import lombok.experimental.Accessors;
 import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
+import practice.application.models.dto.OrderItemCategory;
 import practice.application.models.dto.OrderItemDTO;
 
 import java.time.Instant;
@@ -60,7 +61,7 @@ public class OrderItemEntity implements EntityContracts<OrderItemDTO> {
            .setQuantity(quantity)
            .setCreatedAt(createdAt)
            .setPrice(price)
-           .setCategory(category)
+           .setCategory(OrderItemCategory.valueOf(category))
            .setOrderDTO(orderEntity.toDTO())
            .setProductDTO(productEntity.toDTO());
 
