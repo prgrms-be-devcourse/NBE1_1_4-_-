@@ -21,7 +21,7 @@ public class ProductDTO implements DTOContracts<ProductEntity> {
 
     private UUID productId;
     private String productName;
-    private String category;
+    private ProductCategory category;
     private long price;
     private String description;
     private Instant createdAt;
@@ -34,13 +34,15 @@ public class ProductDTO implements DTOContracts<ProductEntity> {
 
         entity.setProductId(productId)
               .setProductName(productName)
-              .setCategory(category)
+              .setCategory(category.toString())
               .setPrice(price)
               .setDescription(description)
-              .setCreatedAt(createdAt)
-              .setOrderItems(orderItemDTOs.stream()
-                                          .map(OrderItemDTO::toEntity)
-                                          .collect(Collectors.toSet()));
+              .setCreatedAt(createdAt);
+
+        if (orderItemDTOs != null)
+            entity.setOrderItems(orderItemDTOs.stream()
+                                              .map(OrderItemDTO::toEntity)
+                                              .collect(Collectors.toSet()));
 
         return entity;
     }

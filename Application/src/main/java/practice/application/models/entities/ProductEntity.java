@@ -8,6 +8,7 @@ import lombok.ToString;
 import lombok.experimental.Accessors;
 import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.CreationTimestamp;
+import practice.application.models.dto.ProductCategory;
 import practice.application.models.dto.ProductDTO;
 
 import java.time.Instant;
@@ -61,11 +62,13 @@ public class ProductEntity implements EntityContracts<ProductDTO> {
            .setCreatedAt(createdAt)
            .setPrice(price)
            .setProductName(productName)
-           .setCategory(category)
-           .setDescription(description)
-           .setOrderItemDTOs(orderItems.stream()
-                                       .map(OrderItemEntity::toDTO)
-                                       .toList());
+           .setCategory(ProductCategory.valueOf(category))
+           .setDescription(description);
+
+        if (orderItems != null)
+            dto.setOrderItemDTOs(orderItems.stream()
+                                           .map(OrderItemEntity::toDTO)
+                                           .toList());
 
         return dto;
     }
