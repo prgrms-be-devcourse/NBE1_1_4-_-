@@ -1,11 +1,15 @@
 package practice.application.models.entities;
 
 import jakarta.persistence.*;
-import lombok.*;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import lombok.ToString;
 import lombok.experimental.Accessors;
 import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.CreationTimestamp;
 import practice.application.models.dto.OrderDTO;
+import practice.application.models.dto.OrderStatus;
 
 import java.time.Instant;
 import java.util.LinkedHashSet;
@@ -55,12 +59,14 @@ public class OrderEntity implements EntityContracts<OrderDTO> {
         dto.setOrderId(orderId)
            .setCreatedAt(createdAt)
            .setEmail(email)
-           .setOrderStatus(orderStatus)
+           .setOrderStatus(OrderStatus.valueOf(orderStatus))
            .setAddress(address)
-           .setPostcode(postcode)
-           .setOrderItemDTOs(orderItems.stream()
-                                       .map(OrderItemEntity::toDTO)
-                                       .toList());
+           .setPostcode(postcode);
+
+        if (orderItems != null)
+            dto.setOrderItemDTOs(orderItems.stream()
+                                           .map(OrderItemEntity::toDTO)
+                                           .toList());
 
         return dto;
     }

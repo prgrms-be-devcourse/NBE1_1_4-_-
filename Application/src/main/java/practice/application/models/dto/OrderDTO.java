@@ -23,7 +23,7 @@ public class OrderDTO implements DTOContracts<OrderEntity> {
     private String email;
     private String address;
     private String postcode;
-    private String orderStatus;
+    private OrderStatus orderStatus;
     private Instant createdAt;
 
     private List<OrderItemDTO> orderItemDTOs;
@@ -36,11 +36,13 @@ public class OrderDTO implements DTOContracts<OrderEntity> {
               .setEmail(email)
               .setAddress(address)
               .setPostcode(postcode)
-              .setOrderStatus(orderStatus)
-              .setCreatedAt(createdAt)
-              .setOrderItems(orderItemDTOs.stream()
-                                          .map(OrderItemDTO::toEntity)
-                                          .collect(Collectors.toSet()));
+              .setOrderStatus(orderStatus.toString())
+              .setCreatedAt(createdAt);
+
+        if (orderItemDTOs != null)
+            entity.setOrderItems(orderItemDTOs.stream()
+                                              .map(OrderItemDTO::toEntity)
+                                              .collect(Collectors.toSet()));
 
         return entity;
     }
