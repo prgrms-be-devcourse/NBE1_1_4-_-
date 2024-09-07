@@ -2,7 +2,6 @@ package practice.application.services;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import practice.application.models.dto.ProductCategory;
 import practice.application.models.entities.ProductEntity;
 import practice.application.repositories.ProductRepository;
 
@@ -22,8 +21,8 @@ public class ProductService {
         return productRepo.findAll();
     }
 
-    public List<ProductEntity> getAllProducts(ProductCategory category) {
-        return productRepo.findAllByCategory(category.toString());
+    public List<ProductEntity> getAllProducts(String category) {
+        return productRepo.findAllByCategory(category);
     }
 
     public ProductEntity getProductById(UUID id) {
