@@ -16,6 +16,13 @@ import java.util.LinkedHashSet;
 import java.util.Set;
 import java.util.UUID;
 
+/**
+ * {@code Product} 관련 {@code Entity}
+ * <p>
+ * {@link ProductDTO} 와 유사.
+ *
+ * @see ProductDTO
+ */
 @Entity(name = "productEntity")
 @Table(name = "products")
 @Getter
@@ -43,6 +50,9 @@ public class ProductEntity implements EntityContracts<ProductDTO> {
     @Column(name = "product_name", nullable = false, length = 20)
     private String productName;
 
+    /**
+     * @see ProductCategory
+     */
     @ColumnDefault("'UNKNOWN'")
     @Column(name = "category", nullable = false, length = 50)
     private String category;
@@ -54,6 +64,11 @@ public class ProductEntity implements EntityContracts<ProductDTO> {
     @OneToMany(mappedBy = "productEntity")
     private Set<OrderItemEntity> orderItems = new LinkedHashSet<>();
 
+    /**
+     * {@inheritDoc}
+     *
+     * @return {@link ProductDTO}
+     */
     @Override
     public ProductDTO toDTO() {
         ProductDTO dto = new ProductDTO();

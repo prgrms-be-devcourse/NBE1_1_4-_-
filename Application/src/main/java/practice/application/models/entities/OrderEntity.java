@@ -16,6 +16,13 @@ import java.util.LinkedHashSet;
 import java.util.Set;
 import java.util.UUID;
 
+/**
+ * {@code Order} 관련 {@code Entity}
+ * <p>
+ * {@link OrderDTO} 와 유사.
+ *
+ * @see OrderDTO
+ */
 @Entity
 @Table(name = "orders")
 @Getter
@@ -40,6 +47,9 @@ public class OrderEntity implements EntityContracts<OrderDTO> {
     @Column(name = "email", nullable = false, length = 50)
     private String email;
 
+    /**
+     * @see OrderStatus
+     */
     @Column(name = "order_status", nullable = false, length = 50)
     private String orderStatus;
 
@@ -52,6 +62,11 @@ public class OrderEntity implements EntityContracts<OrderDTO> {
     @OneToMany(mappedBy = "orderEntity")
     private Set<OrderItemEntity> orderItems = new LinkedHashSet<>();
 
+    /**
+     * {@inheritDoc}
+     *
+     * @return {@link OrderDTO}
+     */
     @Override
     public OrderDTO toDTO() {
         OrderDTO dto = new OrderDTO();

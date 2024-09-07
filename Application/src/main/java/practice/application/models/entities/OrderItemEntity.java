@@ -14,6 +14,13 @@ import practice.application.models.dto.OrderItemDTO;
 
 import java.time.Instant;
 
+/**
+ * {@code OrderItem} 관련 {@code Entity}
+ * <p>
+ * {@link OrderEntity} 와 유사.
+ *
+ * @see OrderEntity
+ */
 @Entity(name = "order_item_entity")
 @Table(name = "order_items")
 @Getter
@@ -40,6 +47,9 @@ public class OrderItemEntity implements EntityContracts<OrderItemDTO> {
     @Column(name = "updated_at")
     private Instant updatedAt;
 
+    /**
+     * @see OrderItemCategory
+     */
     @Column(name = "category", nullable = false, length = 50)
     private String category;
 
@@ -53,6 +63,11 @@ public class OrderItemEntity implements EntityContracts<OrderItemDTO> {
     @JoinColumn(name = "product_id", nullable = false)
     private ProductEntity productEntity;
 
+    /**
+     * {@inheritDoc}
+     *
+     * @return {@link OrderItemDTO}
+     */
     @Override
     public OrderItemDTO toDTO() {
         OrderItemDTO dto = new OrderItemDTO();
