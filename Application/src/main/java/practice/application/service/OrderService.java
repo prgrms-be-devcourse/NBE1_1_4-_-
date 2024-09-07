@@ -7,6 +7,9 @@ import org.springframework.transaction.annotation.Transactional;
 import practice.application.models.DTO.OrderCreateDTO;
 import practice.application.models.OrderEntity;
 import practice.application.models.OrdersItemEntity;
+import practice.application.models.enumType.OrderStatus;
+import practice.application.models.exception.NotFoundException;
+import practice.application.models.exception.OrderAlreadyCancelledException;
 import practice.application.repositories.OrderRepository;
 import practice.application.repositories.ProductRepository;
 
@@ -31,6 +34,18 @@ public class OrderService {
 
         return orderRepository.save(orderEntity);
     }
+
+
+    public List<OrderEntity> findEmail(String email){
+        List<OrderEntity> orderEntityList = orderRepository.findByEmail(email, OrderStatus.CANCEL).orElseThrow(() -> new NotFoundException("해당 이메일에 대한 주문은 없습니다"));
+
+        if(orderEntityList.isEmpty()){
+          throw new NotFoundException("해당 이메일에 대한 주문은 없습니다");
+        }
+
+        return orderEntityList;
+    }
+
 
 
 

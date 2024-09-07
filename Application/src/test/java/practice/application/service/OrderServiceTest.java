@@ -10,6 +10,7 @@ import org.springframework.transaction.annotation.Transactional;
 import practice.application.models.DTO.OrderCreateDTO;
 import practice.application.models.DTO.OrderItemsDTO;
 import practice.application.models.OrderEntity;
+import practice.application.models.OrdersItemEntity;
 import practice.application.repositories.OrderRepository;
 
 import java.util.ArrayList;
@@ -55,6 +56,29 @@ class OrderServiceTest {
         //then
 
 
+
+    }
+
+    @Test
+    public void 이메일로_주문찾기() throws Exception {
+       //given
+        List<OrderEntity> email = orderService.findEmail("testuser@example.com");
+
+        //when
+
+       //then
+
+        for(OrderEntity orderEntity : email) {
+            System.out.println(orderEntity.getEmail());
+            List<OrdersItemEntity> ordersItemsList = orderEntity.getOrdersItemsList();
+
+
+            for(OrdersItemEntity ordersItemEntity : ordersItemsList) {
+                System.out.println(ordersItemEntity.getPrice());
+
+                System.out.println(ordersItemEntity.getProduct().getProductName());
+            }
+        }
 
     }
 

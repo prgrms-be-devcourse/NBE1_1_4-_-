@@ -5,8 +5,12 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 import practice.application.models.DTO.OrderCreateDTO;
 import practice.application.models.DTO.OrderCreateResponseDTO;
+import practice.application.models.DTO.OrderResponseDTO;
 import practice.application.models.OrderEntity;
 import practice.application.service.OrderService;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @RestController
 @Slf4j
@@ -17,12 +21,35 @@ public class OrdersController {
     private final OrderService orderService;
 
 
-    @PostMapping("")
+    @GetMapping("/{email}") //email로 조회하는 내가 한 주문 api
+    public List<OrderResponseDTO> getOrder(@PathVariable String email) {
+        List<OrderEntity> findOrderEntity = orderService.findEmail(email);
+
+        List<OrderResponseDTO> orderResponseDTOS = new ArrayList<>();
+
+        for(OrderEntity orderEntity : findOrderEntity) {
+            orderResponseDTOS.add(new OrderResponseDTO(orderEntity));
+        }
+
+        return orderResponseDTOS;
+
+    }
+
+
+    @PostMapping("")  //주문 생성 api
     public OrderCreateResponseDTO orderCreate(@RequestBody OrderCreateDTO orderCreateDTO){
         OrderEntity save = orderService.save(orderCreateDTO);
 
         return new OrderCreateResponseDTO(save);
     }
+
+
+
+
+
+
+
+
 
 
 

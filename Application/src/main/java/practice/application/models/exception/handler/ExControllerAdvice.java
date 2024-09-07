@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 import practice.application.models.DTO.ExResponseDTO;
 import practice.application.models.exception.NoStockException;
 import practice.application.models.exception.NotFoundException;
+import practice.application.models.exception.OrderAlreadyCancelledException;
 
 @RestControllerAdvice
 @Slf4j
@@ -24,5 +25,13 @@ public class ExControllerAdvice {
     public ExResponseDTO ExceptionHandler(NoStockException e) {
         return new ExResponseDTO("Bad", e.getMessage());
     }
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    @ExceptionHandler(OrderAlreadyCancelledException.class)
+    public ExResponseDTO ExceptionHandler(OrderAlreadyCancelledException e) {
+        return new ExResponseDTO("Bad", e.getMessage());
+    }
+
+
+
 
 }
