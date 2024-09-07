@@ -4,14 +4,17 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
+import lombok.experimental.Accessors;
+import practice.application.models.entities.OrderItemEntity;
 
 import java.time.Instant;
 
 @Getter
 @Setter
 @ToString
+@Accessors(chain = true)
 @NoArgsConstructor
-public class OrderItemDTO {
+public class OrderItemDTO implements DTOContracts<OrderItemEntity> {
 
     private long id;
     private OrderDTO orderDTO;
@@ -21,15 +24,18 @@ public class OrderItemDTO {
     private int quantity;
     private Instant createdAt;
 
-    //    public static OrderItemEntity toEntity(final OrderItemDTO dto) {
-    //        OrderItemEntity entity = new OrderItemEntity();
-    //        entity.setId(dto.getId());
-    //        entity.setOrderEntity(OrderDTO.toEntity(dto.getOrderDTO()));
-    //        entity.setProductEntity(ProductDTO.toEntity(dto.getProductDTO()));
-    //        entity.setCategory(dto.getCategory());
-    //        entity.setPrice(dto.getPrice());
-    //        entity.setQuantity(dto.getQuantity());
-    //        entity.setCreatedAt(dto.getCreatedAt());
-    //        return entity;
-    //    }
+    @Override
+    public OrderItemEntity toEntity() {
+        OrderItemEntity entity = new OrderItemEntity();
+
+        entity.setId(id)
+              .setOrderEntity(orderDTO.toEntity())
+              .setProductEntity(productDTO.toEntity())
+              .setCategory(category)
+              .setPrice(price)
+              .setQuantity(quantity)
+              .setCreatedAt(createdAt);
+
+        return entity;
+    }
 }

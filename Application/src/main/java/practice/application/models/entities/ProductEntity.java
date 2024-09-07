@@ -1,31 +1,36 @@
 package practice.application.models.entities;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
+import lombok.experimental.Accessors;
 import org.hibernate.annotations.ColumnDefault;
+import org.hibernate.annotations.CreationTimestamp;
+import practice.application.models.dto.ProductDTO;
 
 import java.time.Instant;
+import java.util.LinkedHashSet;
+import java.util.Set;
 import java.util.UUID;
 
-@Entity
+@Entity(name = "productEntity")
 @Table(name = "products")
 @Getter
 @Setter
 @ToString
+@Accessors(chain = true)
 @NoArgsConstructor
-public class ProductEntity {
+public class ProductEntity implements EntityContracts<ProductDTO> {
     @Id
     @Column(name = "product_id", nullable = false, length = 16)
+    @GeneratedValue
     private UUID productId;
 
     @ColumnDefault("(now())")
     @Column(name = "created_at", nullable = false)
+    @CreationTimestamp
     private Instant createdAt;
 
     @Column(name = "price", nullable = false)
@@ -45,4 +50,23 @@ public class ProductEntity {
     @Column(name = "description", length = 500)
     private String description;
 
+    @OneToMany(mappedBy = "productEntity")
+    private Set<OrderItemEntity> orderItems = new LinkedHashSet<>();
+
+    @Override
+    public ProductDTO toDTO() {
+        ProductDTO dto = new ProductDTO();
+
+        dto.setProductId(productId)
+           .setCreatedAt(createdAt)
+           .setPrice(price)
+           .setProductName(productName)
+           .setCategory(category)
+           .setDescription(description)
+           .setOrderItemDTOs(orderItems.stream()
+                                       .map(OrderItemEntity::toDTO)
+                                       .toList());
+
+        return dto;
+    }
 }
