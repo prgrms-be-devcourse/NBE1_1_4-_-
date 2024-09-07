@@ -1,5 +1,6 @@
 package practice.application.services;
 
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import practice.application.models.entities.ProductEntity;
@@ -30,18 +31,21 @@ public class ProductService {
                           .orElse(null);
     }
 
+    @Transactional
     public ProductEntity saveProduct(ProductEntity product) {
         assert product != null;
 
         return productRepo.save(product);
     }
 
+    @Transactional
     public void deleteProduct(UUID id) {
         assert id != null;
 
         productRepo.deleteById(id);
     }
 
+    @Transactional
     public ProductEntity updateProduct(ProductEntity product) {
         assert product != null;
         assert product.getProductId() != null;
@@ -53,3 +57,6 @@ public class ProductService {
         return productRepo.count();
     }
 }
+
+// TODO 문서화 필요
+// TODO_imp delete 기능 만들어야 함.

@@ -12,6 +12,9 @@ import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
+/**
+ * 클라이언트와 주고받을 {@code Order} 관련 {@code DTO}
+ */
 @Getter
 @Setter
 @ToString
@@ -23,11 +26,22 @@ public class OrderDTO implements DTOContracts<OrderEntity> {
     private String email;
     private String address;
     private String postcode;
+
+    /**
+     * 배송 상태
+     *
+     * @see OrderStatus
+     */
     private OrderStatus orderStatus;
     private Instant createdAt;
 
     private List<OrderItemDTO> orderItemDTOs;
 
+    /**
+     * {@inheritDoc}
+     *
+     * @return {@link OrderEntity}
+     */
     @Override
     public OrderEntity toEntity() {
         OrderEntity entity = new OrderEntity();
@@ -47,3 +61,5 @@ public class OrderDTO implements DTOContracts<OrderEntity> {
         return entity;
     }
 }
+
+// TODO 추후 문서화 필요

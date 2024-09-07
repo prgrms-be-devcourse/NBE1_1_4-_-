@@ -9,3 +9,5 @@ import java.util.UUID;
 public interface ProductRepository extends JpaRepository<ProductEntity, UUID> {
     List<ProductEntity> findAllByCategory(String category);
 }
+
+// TODO 추후 문서화 필요

@@ -6,3 +6,5 @@ import practice.application.models.entities.OrderEntity;
 import java.util.UUID;
 
 public interface OrderRepository extends JpaRepository<OrderEntity, UUID> {}
+
+// TODO 추후 문서화 필요

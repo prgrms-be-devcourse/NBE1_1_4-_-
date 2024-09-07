@@ -19,11 +19,22 @@ public class OrderItemDTO implements DTOContracts<OrderItemEntity> {
     private long id;
     private OrderDTO orderDTO;
     private ProductDTO productDTO;
+
+    /**
+     * 배송 아이템 카테고리
+     *
+     * @see OrderItemCategory
+     */
     private OrderItemCategory category;
     private long price;
     private int quantity;
     private Instant createdAt;
 
+    /**
+     * {@inheritDoc}
+     *
+     * @return {@link OrderItemDTO}
+     */
     @Override
     public OrderItemEntity toEntity() {
         OrderItemEntity entity = new OrderItemEntity();
@@ -39,3 +50,5 @@ public class OrderItemDTO implements DTOContracts<OrderItemEntity> {
         return entity;
     }
 }
+
+// TODO 문서화 필요
