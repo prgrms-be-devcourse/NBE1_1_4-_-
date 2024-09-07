@@ -1,11 +1,16 @@
 package practice.application.services;
 
 import jakarta.transaction.Transactional;
-import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import practice.application.models.entities.ProductEntity;
 
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.UUID;
 import java.util.logging.Logger;
 
@@ -13,8 +18,6 @@ import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
 @Transactional
-@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-
 public class ProductServiceTest {
     @Autowired
     ProductService productService;
@@ -102,5 +105,34 @@ public class ProductServiceTest {
         assertArrayEquals(entities, resultEntities);
 
         logger.info("Product update test successful");
+    }
+
+    @Test
+    @DisplayName("Find By Category Test")
+    void getAllProductsByCategory() {
+        logger.info("Testing product getAllProductsByCategory");
+
+        int i = 0;
+        for (; i < entities.length / 2; i++) {
+            entities[i].setCategory("Test Category 1");
+            productService.saveProduct(entities[i]);
+        }
+
+        for (; i < entities.length; i++) {
+            entities[i].setCategory("Test Category 2");
+            productService.saveProduct(entities[i]);
+        }
+
+        Set<ProductEntity> entitySet = new HashSet<>(Arrays.asList(entities));
+
+        Set<ProductEntity> category1 = new HashSet<>(productService.getAllProducts("Test Category 1"));
+
+        Set<ProductEntity> category2 = new HashSet<>(productService.getAllProducts("Test Category 2"));
+
+        assertTrue(entitySet.containsAll(category1));
+        assertTrue(entitySet.containsAll(category2));
+        assertEquals(entitySet.size(), category1.size() + category2.size());
+
+        logger.info("Product getAllProductsByCategory test successful");
     }
 }
