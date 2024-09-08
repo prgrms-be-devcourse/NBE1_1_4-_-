@@ -162,6 +162,82 @@ public class OrderController {
 
         return ResponseEntity.ok(orderDetail);
     }
+
+    /**
+     * 특정 주문의 제품 목록을 수정하는 메서드.
+     *
+     * <p>이전 연관된 모든 {@link OrderItemEntity} 를 삭제하고, 주어진 {@link OrderDTO#getOrderItemDTOs()} 로 대체함.
+     *
+     * <li>배송 예약할 때 반드시 필요한 {@link OrderDTO} {@code Fields} :
+     * <pre class="code">
+     *      long id;
+     *      String email;
+     *      String address;
+     *      String postcode;
+     *      List< orderItemDTOs > = {
+     *          OrderItemCategory category;
+     *          int quantity;
+     *          ProductDTO productDTO = {
+     *              UUID productId;
+     *          }
+     *      }
+     *  </pre>
+     *
+     * @param orderDTO 수정할 주문 정보
+     * @return {@link ResponseEntity}
+     */
+    @Transactional
+    @PutMapping("/edit")
+    public ResponseEntity<?> editOrder(@RequestBody OrderDTO orderDTO) {
+        UUID id = orderDTO.getOrderId();
+
+        if (id == null)
+            return ResponseEntity.badRequest()
+                                 .body("Order Id is required");
+
+        OrderEntity orderEntity = orderService.getOrderById(id);
+
+        if (orderEntity == null)
+            return ResponseEntity.badRequest()
+                                 .body("No such order with id [" + id + "] found.");
+        else if (orderEntity.getOrderStatus()
+                            .equals(OrderStatus.COMPLETED.toString()))
+            return ResponseEntity.badRequest()
+                                 .body("Order [" + id + "] cannot be updated due to shipping.");
+
+        List<OrderItemEntity> newItems = validateOrderItemListToEntity(orderEntity, orderDTO.getOrderItemDTOs());
+
+        if (newItems == null || newItems.isEmpty())
+            return ResponseEntity.badRequest()
+                                 .body("Invalid Order Items were given");
+
+        List<OrderItemEntity> prevItems = new ArrayList<>(orderEntity.getOrderItems()
+                                                                     .stream()
+                                                                     .map(e -> e.setOrderEntity(null))
+                                                                     .map(e -> e.setProductEntity(null))
+                                                                     .toList());
+        orderEntity.getOrderItems()
+                   .clear();
+        orderService.deleteOrderItems(prevItems);
+
+        orderEntity.setEmail(orderDTO.getEmail());
+        orderEntity.setAddress(orderDTO.getAddress());
+        orderEntity.setPostcode(orderDTO.getPostcode());
+        orderEntity.setUpdatedAt(Instant.now());
+        orderEntity.getOrderItems()
+                   .addAll(newItems);
+        orderService.createOrder(orderEntity);
+
+        List<OrderItemDTO> orderedItems = orderService.reserveOrder(newItems)
+                                                      .stream()
+                                                      .map(OrderItemEntity::toDTO)
+                                                      .map(dto -> dto.setOrderDTO(null))
+                                                      .toList();
+
+        return ResponseEntity.ok(orderEntity.toDTO()
+                                            .setOrderItemDTOs(orderedItems));
+    }
+
     private List<OrderItemEntity> validateOrderItemListToEntity(
             OrderEntity orderEntity, List<OrderItemDTO> orderItemDTOList
     ) {

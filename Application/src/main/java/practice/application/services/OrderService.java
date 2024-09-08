@@ -48,6 +48,12 @@ public class OrderService {
         return orderRepository.findByOrderId(id);
     }
 
+    public void deleteOrderItems(List<OrderItemEntity> itemEntity) {
+        assert itemEntity != null && !itemEntity.isEmpty();
+
+        orderItemRepository.deleteAll(itemEntity);
+    }
+
     public void deleteOrderById(UUID id) {
         assert id != null;
 
