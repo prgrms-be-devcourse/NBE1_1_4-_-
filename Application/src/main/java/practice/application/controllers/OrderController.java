@@ -286,4 +286,23 @@ public class OrderController {
 
         return validatedList;
     }
+    @Transactional
+    @DeleteMapping("/delete")
+    public ResponseEntity<?> deleteOrder(@RequestBody OrderDTO orderDTO) {
+        UUID id = orderDTO.getOrderId();
+
+        if (id == null)
+            return ResponseEntity.badRequest()
+                                 .body("Order Id is required");
+
+        OrderEntity orderEntity = orderService.getOrderById(id);
+
+        if (orderEntity == null)
+            return ResponseEntity.badRequest()
+                                 .body("No such order with id [" + id + "] found.");
+
+        orderService.deleteOrderById(orderEntity.getOrderId());
+
+        return ResponseEntity.ok(orderEntity.toDTO());
+    }
 }

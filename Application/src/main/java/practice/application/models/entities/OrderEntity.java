@@ -58,7 +58,7 @@ public class OrderEntity implements EntityContracts<OrderDTO> {
     @Column(name = "postcode", nullable = false, length = 200)
     private String postcode;
 
-    @OneToMany(mappedBy = "orderEntity", fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "orderEntity", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
     private Set<OrderItemEntity> orderItems = new LinkedHashSet<>();
 
     /**
