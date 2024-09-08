@@ -35,8 +35,6 @@ public class ShippingService {
             for (OrderEntity order : unshippedOrders)
                 order.setOrderStatus(OrderStatus.COMPLETED.toString());
 
-            System.out.println(unshippedOrders);
-
             orderRepository.saveAll(unshippedOrders);
             logger.info("All packages were send");
         }

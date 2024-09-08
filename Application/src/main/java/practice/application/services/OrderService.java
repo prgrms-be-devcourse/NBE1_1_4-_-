@@ -2,6 +2,7 @@ package practice.application.services;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import practice.application.models.dto.OrderStatus;
 import practice.application.models.entities.OrderEntity;
 import practice.application.models.entities.OrderItemEntity;
 import practice.application.repositories.OrderItemRepository;
@@ -40,8 +41,7 @@ public class OrderService {
     public OrderEntity getOrderById(UUID id) {
         assert id != null;
 
-        return orderRepository.findById(id)
-                              .orElse(null);
+        return orderRepository.findByOrderId(id);
     }
 
     public void deleteOrderById(UUID id) {

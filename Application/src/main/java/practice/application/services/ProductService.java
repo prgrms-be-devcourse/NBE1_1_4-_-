@@ -6,6 +6,7 @@ import practice.application.models.dto.ProductCategory;
 import practice.application.models.entities.ProductEntity;
 import practice.application.repositories.ProductRepository;
 
+import java.time.Instant;
 import java.util.List;
 import java.util.UUID;
 
@@ -89,6 +90,10 @@ public class ProductService {
     public ProductEntity updateProduct(ProductEntity product) {
         assert product != null;
         assert product.getProductId() != null;
+
+        Instant now = Instant.now();
+        product.setCreatedAt(now);
+        product.setUpdatedAt(now);
 
         return productRepo.save(product);
     }

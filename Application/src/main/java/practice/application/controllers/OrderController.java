@@ -3,10 +3,7 @@ package practice.application.controllers;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import practice.application.models.dto.*;
 import practice.application.models.entities.OrderEntity;
 import practice.application.models.entities.OrderItemEntity;
@@ -38,17 +35,25 @@ public class OrderController {
     //</editor-fold>
 
     /**
-     * <li>배송 예약할 때 반드시 필요한 {@link OrderItemDTO} {@code Fields} :
+     * 주어진 주문 정보를 DB 에 저장
+     *
+     * <li>배송 예약할 때 반드시 필요한 {@link OrderDTO} {@code Fields} :
      * <pre class="code">
      *      long id = [ null | empty ]
      *      String email;
      *      String address;
      *      String postcode;
      *      OrderStatus orderStatus = [ null | empty ]
-     *      List< orderItemDTOs > = [null | empty]
+     *      List< orderItemDTOs > = {
+     *          OrderItemCategory category;
+     *          int quantity;
+     *          ProductDTO productDTO = {
+     *              UUID productId;
+     *          }
+     *      }
      *  </pre>
      *
-     * @param orderDTO
+     * @param orderDTO 주문 정보
      * @return {@link ResponseEntity}
      */
     @Transactional
@@ -121,5 +126,4 @@ public class OrderController {
 
         return validatedList;
     }
-
 }

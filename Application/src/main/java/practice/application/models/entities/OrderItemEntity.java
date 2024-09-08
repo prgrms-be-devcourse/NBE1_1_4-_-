@@ -20,7 +20,7 @@ import java.time.Instant;
  *
  * @see OrderEntity
  */
-@Entity(name = "order_item_entity")
+@Entity
 @Table(name = "order_items")
 @Getter
 @Setter
