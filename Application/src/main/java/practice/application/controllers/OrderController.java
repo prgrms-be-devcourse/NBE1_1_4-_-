@@ -87,6 +87,81 @@ public class OrderController {
                                             .setOrderItemDTOs(orderedItems));
     }
 
+    /**
+     * DB 에 저장된 모든 주문 정보를 반환
+     *
+     * @param status  조회할 배송 상태
+     * @param verbose 주문 제품 목록 포함 여부
+     * @return {@link ResponseEntity}
+     */
+    @GetMapping("/list")
+    public ResponseEntity<?> showAllOrders(
+            @RequestParam(value = "status", required = false) OrderStatus status,
+            @RequestParam(value = "verbose", defaultValue = "false") boolean verbose
+    ) {
+
+        List<OrderEntity> searchResult = status == null ?
+                                         orderService.getAllOrders() :
+                                         orderService.getAllOrders(status);
+
+        if (!verbose)
+            return ResponseEntity.ok(searchResult.stream()
+                                                 .map(OrderEntity::toDTO)
+                                                 .toList());
+
+        List<OrderDTO> verboseResult = new ArrayList<>(searchResult.size());
+
+        for (OrderEntity orderEntity : searchResult) {
+            List<OrderItemDTO> orderItems = orderEntity.getOrderItems()
+                                                       .stream()
+                                                       .map(OrderItemEntity::toDTO)
+                                                       .map(dto -> dto.setOrderDTO(null))
+                                                       .toList();
+
+            OrderDTO orderDTO = orderEntity.toDTO()
+                                           .setOrderItemDTOs(orderItems);
+            verboseResult.add(orderDTO);
+        }
+
+        return ResponseEntity.ok(verboseResult);
+    }
+
+    /**
+     * 특정 주문의 정보를 반환
+     *
+     * <li>배송 예약할 때 반드시 필요한 {@link OrderDTO} {@code Fields} :
+     * <pre class="code">
+     *      long id;
+     * </pre>
+     *
+     * @param orderDTO 조회할 주문 정보 {@code ID}
+     * @return {@link ResponseEntity}
+     */
+    @GetMapping("/detail")
+    public ResponseEntity<?> showOrderDetail(@RequestBody OrderDTO orderDTO) {
+        UUID id = orderDTO.getOrderId();
+
+        if (id == null)
+            return ResponseEntity.badRequest()
+                                 .body("Order Id is required");
+
+        OrderEntity orderEntity = orderService.getOrderById(id);
+
+        if (orderEntity == null)
+            return ResponseEntity.badRequest()
+                                 .body("No such order with id [" + id + "] found.");
+
+        List<OrderItemDTO> orderedItems = orderEntity.getOrderItems()
+                                                     .stream()
+                                                     .map(e -> e.setOrderEntity(null))
+                                                     .map(OrderItemEntity::toDTO)
+                                                     .toList();
+
+        OrderDTO orderDetail = orderEntity.toDTO()
+                                          .setOrderItemDTOs(orderedItems);
+
+        return ResponseEntity.ok(orderDetail);
+    }
     private List<OrderItemEntity> validateOrderItemListToEntity(
             OrderEntity orderEntity, List<OrderItemDTO> orderItemDTOList
     ) {

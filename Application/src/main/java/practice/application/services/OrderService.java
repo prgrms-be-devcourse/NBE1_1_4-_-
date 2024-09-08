@@ -38,6 +38,10 @@ public class OrderService {
         return orderRepository.findAll();
     }
 
+    public List<OrderEntity> getAllOrders(OrderStatus status) {
+        return orderRepository.findAllByOrderStatus(status.toString());
+    }
+
     public OrderEntity getOrderById(UUID id) {
         assert id != null;
 
