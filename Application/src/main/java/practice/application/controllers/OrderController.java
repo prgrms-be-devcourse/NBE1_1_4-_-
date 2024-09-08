@@ -238,6 +238,15 @@ public class OrderController {
                                             .setOrderItemDTOs(orderedItems));
     }
 
+    /**
+     * {@link OrderItemEntity} DB 에 잘 저장하기 위한 메서드.
+     *
+     * <p>주어진 {@code orderItemDTOList} 가 올바른지 확인하고 {@code orderEntity} 와 연관된 새로운 {@link OrderItemEntity} 목록을 반환함.
+     *
+     * @param orderEntity      {@link OrderItemEntity} 와 연관될 {@link OrderEntity}
+     * @param orderItemDTOList {@link OrderItemEntity} 목록으로 만들어질 {@link OrderItemDTO} 들
+     * @return {@link ResponseEntity}
+     */
     private List<OrderItemEntity> validateOrderItemListToEntity(
             OrderEntity orderEntity, List<OrderItemDTO> orderItemDTOList
     ) {
