@@ -18,6 +18,13 @@ public class ProductService {
         this.productRepo = productRepo;
     }
 
+
+    public ProductEntity saveProduct(ProductEntity product) {
+        assert product != null;
+
+        return productRepo.save(product);
+    }
+
     public List<ProductEntity> getAllProducts() {
         return productRepo.findAll();
     }
@@ -31,21 +38,6 @@ public class ProductService {
                           .orElse(null);
     }
 
-    @Transactional
-    public ProductEntity saveProduct(ProductEntity product) {
-        assert product != null;
-
-        return productRepo.save(product);
-    }
-
-    @Transactional
-    public void deleteProduct(UUID id) {
-        assert id != null;
-
-        productRepo.deleteById(id);
-    }
-
-    @Transactional
     public ProductEntity updateProduct(ProductEntity product) {
         assert product != null;
         assert product.getProductId() != null;
@@ -56,7 +48,12 @@ public class ProductService {
     public long countProducts() {
         return productRepo.count();
     }
+
+    public void deleteProduct(UUID id) {
+        assert id != null;
+
+        productRepo.deleteById(id);
+    }
 }
 
 // TODO 문서화 필요
-// TODO_imp delete 기능 만들어야 함.

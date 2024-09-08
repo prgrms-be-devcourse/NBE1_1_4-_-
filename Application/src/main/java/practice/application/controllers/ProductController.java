@@ -1,5 +1,6 @@
 package practice.application.controllers;
 
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -16,10 +17,11 @@ import java.util.logging.Logger;
  * <h5>제품의 CRUD 와 관련된 {@code Controller}</h5>
  * <p>
  * 구현된 {@code EndPoint} 들
- * <li>{@link #listProducts} : {@code /list} + {@code (Optional)/category}
- * <li>{@link #showProductDetail}   : {@code /detail/{id}}
- * <li>{@link #editProductDetail}   :   {@code /edit}
  * <li>{@link #addProduct}          :   {@code /add}
+ * <li>{@link #listProducts} : {@code /list} + {@code (Optional)/category}
+ * <li>{@link #showProductDetail}   : {@code /detail}
+ * <li>{@link #editProductDetail}   :   {@code /edit}
+ * <li>{@link #deleteProduct}       :   {@code /delete}
  *
  * @see ProductDTO
  * @see ProductEntity
@@ -38,6 +40,37 @@ public class ProductController {
 
     private final Logger logger = Logger.getLogger(ProductController.class.getName());
 
+    /**
+     * 새로운 제품을 등록하는 {@code EndPoint}.
+     *
+     * <li>상품 추가할 때 반드시 필요한 {@link ProductDTO} {@code Fields} :
+     * <pre class="code">
+     *      UUID productId = [ null | empty ]
+     *      String productName;
+     *      ProductCategory category;
+     *      long price;
+     *  </pre>
+     *
+     * @param productDTO 제품 정보가 포함된 {@code DTO}
+     * @return {@link ResponseEntity}
+     * @warning {@code ProductCategory category} 는 반드시 {@link ProductCategory} 원소와 일치하는 {@code (ProductCategory.valueOf(...))} {@code String} 이어야 함.
+     * @see ProductCategory
+     */
+    @PostMapping("/add")
+    public ResponseEntity<?> addProduct(@RequestBody ProductDTO productDTO) {
+        UUID id = productDTO.getProductId();
+
+        if (id != null) {
+            logger.warning("[addProduct] - Given Product id is not null. Silently set id as null.");
+            productDTO.setProductId(null);
+        }
+
+        ProductDTO result = productService.saveProduct(productDTO.toEntity())
+                                          .toDTO();
+
+        return ResponseEntity.ok()
+                             .body(result);
+    }
 
     /**
      * 현 DB 에 저장된 모든 제품을 보여주는 {@code EndPoint}.
@@ -45,6 +78,7 @@ public class ProductController {
      *
      * @param category 검색하고 싶은 카테고리, {@link ProductCategory} 이름과 일치해야 함.
      * @return {@link ResponseEntity}
+     * @see ProductCategory
      */
     @GetMapping("/list")
     public ResponseEntity<?> listProducts(
@@ -65,13 +99,24 @@ public class ProductController {
     /**
      * 특정 제품의 정보를 보여주는 {@code EndPoint}.
      *
-     * @param id 제품의 id {@code  (UUID)}
+     * <li>상품 상세 내용 조회할 때 반드시 필요한 {@link ProductDTO} {@code Fields} :
+     * <pre class="code">
+     *      UUID productId;
+     *  </pre>
+     *
+     * @param productDTO 제품 {@code ID} 가 포함된 {@code DTO}
      * @return {@link ResponseEntity}
      */
-    @GetMapping("/detail/{id}")
+    @GetMapping("/detail")
     public ResponseEntity<?> showProductDetail(
-            @PathVariable("id") UUID id
+            @RequestBody ProductDTO productDTO
     ) {
+        UUID id = productDTO.getProductId();
+
+        if (id == null)
+            return ResponseEntity.badRequest()
+                                 .body("Product id is required");
+
         ProductEntity entity = productService.getProductById(id);
 
         if (entity == null)
@@ -85,45 +130,72 @@ public class ProductController {
     /**
      * 특정 제품의 정보를 편집하는 {@code EndPoint}.
      * <p>
-     * 만약 주어진 {@code dto} 의 {@code id} 로 저장된 제품이 없으면 {@code warning} 로그 후, 그대로 DB 에 저장
+     * 만약 주어진 {@code productDTO} 의 {@code id} 로 저장된 제품이 없으면 {@code warning} 로그 후, 그대로 DB 에 저장
      *
-     * @param dto 편집할 제품의 정보, {@code id} 는 이전 제품과 일치해야 하고, 나머지 정보는 수정된 정보
+     * <li>상품 정보 편집할 때 반드시 필요한 {@link ProductDTO} {@code Fields} :
+     * <pre class="code">
+     *      UUID productId;
+     *      String productName;
+     *      ProductCategory category;
+     *      long price;
+     *  </pre>
+     *
+     * @param productDTO 편집할 제품의 정보, {@code ID} 는 이전 제품과 일치해야 하고, 나머지 정보는 수정된 정보
      * @return {@link ResponseEntity}
+     * @see ProductDTO
      */
     @PutMapping("/edit")
     public ResponseEntity<?> editProductDetail(
-            @RequestBody ProductDTO dto
+            @RequestBody ProductDTO productDTO
     ) {
-        UUID id = dto.getProductId();
+        UUID id = productDTO.getProductId();
 
         if (id == null)
             return ResponseEntity.badRequest()
                                  .body("Product id is required");
 
         if (productService.getProductById(id) == null)
-            logger.warning("No such product with id [" + id + "] found. \nIt will be automatically added to DB");
+            logger.warning("No such product with id [" + id + "] found. " + "It will be automatically added to DB");
 
-        ProductEntity entity = dto.toEntity();
-        productService.updateProduct(entity);
+        ProductEntity resultEntity = productService.updateProduct(productDTO.toEntity());
 
         return ResponseEntity.ok()
-                             .body(entity.toDTO());
+                             .body(resultEntity.toDTO());
     }
 
     /**
-     * 새로운 제품을 등록하는 {@code EndPoint}.
+     * 특정 제품을 {@code DB} 에서 삭제하는 {@code EndPoint}.
      *
-     * @param productDTO 등록할 제품
+     * <li>상품 정보 편집할 때 반드시 필요한 {@link ProductDTO} {@code Fields} :
+     * <pre class="code">
+     *      UUID productId;
+     *  </pre>
+     *
+     * @param productDTO 삭제할 제품 {@code ID} 가 포함된 {@code DTO}
      * @return {@link ResponseEntity}
      */
-    @PostMapping("/add")
-    public ResponseEntity<?> addProduct(@RequestBody ProductDTO productDTO) {
-        ProductDTO result = productService.saveProduct(productDTO.toEntity())
-                                          .toDTO();
+    @Transactional
+    @DeleteMapping("/delete")
+    public ResponseEntity<?> deleteProduct(
+            @RequestBody ProductDTO productDTO
+    ) {
+        UUID id = productDTO.getProductId();
+
+        if (id == null)
+            return ResponseEntity.badRequest()
+                                 .body("Product id is required");
+
+        ProductEntity entity = productService.getProductById(id);
+
+        if (entity == null)
+            logger.warning("No such product with id [" + id + "] found. " + "It will silently ignored.");
+
+        productService.deleteProduct(id);
 
         return ResponseEntity.ok()
-                             .body(result);
+                             .body(entity == null ?
+                                   null :
+                                   entity.setDescription("<< Product has been deleted >>")
+                                         .toDTO());
     }
 }
-
-// TODO_imp delete 기능 만들어야 함.
