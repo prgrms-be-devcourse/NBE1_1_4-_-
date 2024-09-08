@@ -16,35 +16,6 @@ import java.util.stream.Collectors;
 /**
  * 클라이언트와 주고받을 {@code Product} 관련 {@code DTO}
  *
- *
- * <li>상품 전체 내용 조회할 때 반드시 필요한 {@code Fields} :
- * <pre class="code">
- *      None
- *  </pre>
- *
- * <li>상품 상세 내용 조회할 때 반드시 필요한 {@code Fields} :
- *
- * <pre class="code">
- *      UUID productId;
- *  </pre>
- *
- *
- * <li>상품 정보 편집할 때 반드시 필요한 {@code Fields} :
- * <pre class="code">
- *      UUID productId;
- *      String productName;
- *      ProductCategory category;
- *      long price;
- *  </pre>
- *
- * <li>상품 추가할 때 반드시 필요한 {@code Fields} :
- * <pre class="code">
- *      String productName;
- *      ProductCategory category;
- *      long price;
- *  </pre>
- *
- * @warning {@code ProductCategory category} 는 반드시 {@link ProductCategory} 원소와 일치하는 {@code String} 이어야 함.
  * @see practice.application.controllers.ProductController
  */
 @Getter
