@@ -4,7 +4,6 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import lombok.ToString;
 import lombok.experimental.Accessors;
 import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.CreationTimestamp;
@@ -27,7 +26,6 @@ import java.util.UUID;
 @Table(name = "orders")
 @Getter
 @Setter
-@ToString
 @Accessors(chain = true)
 @NoArgsConstructor
 public class OrderEntity implements EntityContracts<OrderDTO> {
@@ -41,6 +39,7 @@ public class OrderEntity implements EntityContracts<OrderDTO> {
     @CreationTimestamp
     private Instant createdAt;
 
+    @ColumnDefault("(now())")
     @Column(name = "updated_at")
     private Instant updatedAt;
 
@@ -59,7 +58,7 @@ public class OrderEntity implements EntityContracts<OrderDTO> {
     @Column(name = "postcode", nullable = false, length = 200)
     private String postcode;
 
-    @OneToMany(mappedBy = "orderEntity")
+    @OneToMany(mappedBy = "orderEntity", fetch = FetchType.LAZY)
     private Set<OrderItemEntity> orderItems = new LinkedHashSet<>();
 
     /**
@@ -78,11 +77,39 @@ public class OrderEntity implements EntityContracts<OrderDTO> {
            .setAddress(address)
            .setPostcode(postcode);
 
-        if (orderItems != null)
-            dto.setOrderItemDTOs(orderItems.stream()
-                                           .map(OrderItemEntity::toDTO)
-                                           .toList());
-
         return dto;
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+        sb.append("OrderEntity{" + "orderId=")
+          .append(orderId)
+          .append(", createdAt=")
+          .append(createdAt)
+          .append(", updatedAt=")
+          .append(updatedAt)
+          .append(", email='")
+          .append(email)
+          .append('\'')
+          .append(", orderStatus='")
+          .append(orderStatus)
+          .append('\'')
+          .append(", address='")
+          .append(address)
+          .append('\'')
+          .append(", postcode='")
+          .append(postcode)
+          .append('\'')
+          .append(", orderItems=[");
+
+        for (OrderItemEntity item : orderItems)
+            sb.append(item.getId())
+              .append(", ");
+
+        sb.delete(sb.length() - 2, sb.length());
+        sb.append("]}");
+
+        return sb.toString();
     }
 }

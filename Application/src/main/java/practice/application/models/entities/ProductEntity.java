@@ -4,7 +4,6 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import lombok.ToString;
 import lombok.experimental.Accessors;
 import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.CreationTimestamp;
@@ -27,7 +26,6 @@ import java.util.UUID;
 @Table(name = "products")
 @Getter
 @Setter
-@ToString
 @Accessors(chain = true)
 @NoArgsConstructor
 public class ProductEntity implements EntityContracts<ProductDTO> {
@@ -44,6 +42,7 @@ public class ProductEntity implements EntityContracts<ProductDTO> {
     @Column(name = "price", nullable = false)
     private Long price;
 
+    @ColumnDefault("(now())")
     @Column(name = "updated_at")
     private Instant updatedAt;
 
@@ -61,7 +60,8 @@ public class ProductEntity implements EntityContracts<ProductDTO> {
     @Column(name = "description", length = 500)
     private String description;
 
-    @OneToMany(mappedBy = "productEntity")
+    @OneToMany(mappedBy = "productEntity", fetch = FetchType.LAZY)
+    @Column(nullable = true)
     private Set<OrderItemEntity> orderItems = new LinkedHashSet<>();
 
     /**
@@ -80,11 +80,38 @@ public class ProductEntity implements EntityContracts<ProductDTO> {
            .setCategory(ProductCategory.valueOf(category))
            .setDescription(description);
 
-        if (orderItems != null)
-            dto.setOrderItemDTOs(orderItems.stream()
-                                           .map(OrderItemEntity::toDTO)
-                                           .toList());
-
         return dto;
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+        sb.append("ProductEntity{" + "productId=")
+          .append(productId)
+          .append(", createdAt=")
+          .append(createdAt)
+          .append(", price=")
+          .append(price)
+          .append(", updatedAt=")
+          .append(updatedAt)
+          .append(", productName='")
+          .append(productName)
+          .append('\'')
+          .append(", category='")
+          .append(category)
+          .append('\'')
+          .append(", description='")
+          .append(description)
+          .append('\'')
+          .append(", orderItems=[");
+
+        for (OrderItemEntity orderItem : orderItems)
+            sb.append(orderItem.getId())
+              .append(", ");
+
+        sb.delete(sb.length() - 2, sb.length());
+        sb.append("]}");
+
+        return sb.toString();
     }
 }

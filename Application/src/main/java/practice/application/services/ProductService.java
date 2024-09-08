@@ -33,6 +33,7 @@ public class ProductService {
      */
     public ProductEntity saveProduct(ProductEntity product) {
         assert product != null;
+        assert product.getProductId() == null;
 
         return productRepo.save(product);
     }

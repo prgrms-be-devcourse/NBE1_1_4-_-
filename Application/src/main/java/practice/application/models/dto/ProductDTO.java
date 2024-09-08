@@ -3,14 +3,11 @@ package practice.application.models.dto;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import lombok.ToString;
 import lombok.experimental.Accessors;
 import practice.application.models.entities.ProductEntity;
 
 import java.time.Instant;
-import java.util.List;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 
 /**
@@ -20,7 +17,6 @@ import java.util.stream.Collectors;
  */
 @Getter
 @Setter
-@ToString
 @Accessors(chain = true)
 @NoArgsConstructor
 public class ProductDTO implements DTOContracts<ProductEntity> {
@@ -57,10 +53,6 @@ public class ProductDTO implements DTOContracts<ProductEntity> {
      */
     private Instant createdAt;
 
-    /**
-     * 연관된 {@link OrderItemDTO} 들
-     */
-    private List<OrderItemDTO> orderItemDTOs;
 
     /**
      * {@inheritDoc}
@@ -71,18 +63,22 @@ public class ProductDTO implements DTOContracts<ProductEntity> {
     public ProductEntity toEntity() {
         ProductEntity entity = new ProductEntity();
 
+        if (category != null)
+            entity.setCategory(category.toString());
+
         entity.setProductId(productId)
               .setProductName(productName)
-              .setCategory(category.toString())
               .setPrice(price)
               .setDescription(description)
               .setCreatedAt(createdAt);
 
-        if (orderItemDTOs != null)
-            entity.setOrderItems(orderItemDTOs.stream()
-                                              .map(OrderItemDTO::toEntity)
-                                              .collect(Collectors.toSet()));
-
         return entity;
+    }
+
+    @Override
+    public String toString() {
+        return "ProductDTO{" + "productId=" + productId + ", productName='" + productName + '\'' + ", category=" +
+               category + ", price=" + price + ", description='" + description + '\'' + ", createdAt=" + createdAt +
+               "}";
     }
 }

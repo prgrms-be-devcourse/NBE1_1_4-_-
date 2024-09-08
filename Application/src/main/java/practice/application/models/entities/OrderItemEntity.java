@@ -4,7 +4,6 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import lombok.ToString;
 import lombok.experimental.Accessors;
 import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.OnDelete;
@@ -25,7 +24,6 @@ import java.time.Instant;
 @Table(name = "order_items")
 @Getter
 @Setter
-@ToString
 @Accessors(chain = true)
 @NoArgsConstructor
 public class OrderItemEntity implements EntityContracts<OrderItemDTO> {
@@ -44,6 +42,7 @@ public class OrderItemEntity implements EntityContracts<OrderItemDTO> {
     @Column(name = "price", nullable = false)
     private Long price;
 
+    @ColumnDefault("(now())")
     @Column(name = "updated_at")
     private Instant updatedAt;
 
@@ -53,12 +52,12 @@ public class OrderItemEntity implements EntityContracts<OrderItemDTO> {
     @Column(name = "category", nullable = false, length = 50)
     private String category;
 
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @ManyToOne(fetch = FetchType.LAZY, optional = false, cascade = CascadeType.ALL)
     @OnDelete(action = OnDeleteAction.CASCADE)
     @JoinColumn(name = "order_id", nullable = false)
     private OrderEntity orderEntity;
 
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @ManyToOne(fetch = FetchType.LAZY, optional = false, cascade = CascadeType.ALL)
     @OnDelete(action = OnDeleteAction.CASCADE)
     @JoinColumn(name = "product_id", nullable = false)
     private ProductEntity productEntity;
@@ -72,14 +71,24 @@ public class OrderItemEntity implements EntityContracts<OrderItemDTO> {
     public OrderItemDTO toDTO() {
         OrderItemDTO dto = new OrderItemDTO();
 
+        if (orderEntity != null)
+            dto.setOrderDTO(orderEntity.toDTO());
+
         dto.setId(id)
            .setQuantity(quantity)
            .setCreatedAt(createdAt)
-           .setPrice(price)
+           .setTotalPrice(price)
            .setCategory(OrderItemCategory.valueOf(category))
-           .setOrderDTO(orderEntity.toDTO())
            .setProductDTO(productEntity.toDTO());
 
         return dto;
+    }
+
+    @Override
+    public String toString() {
+        return "OrderItemEntity{" + "id=" + id + ", quantity=" + quantity + ", createdAt=" + createdAt + ", price=" +
+               price + ", updatedAt=" + updatedAt + ", category='" + category + '\'' + ", orderEntity=" +
+               (orderEntity == null ? "null" : orderEntity.getOrderId()) + ", productEntity=" +
+               (productEntity == null ? "null" : productEntity.getProductId()) + '}';
     }
 }
