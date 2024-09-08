@@ -37,7 +37,7 @@ public class OrderController {
     /**
      * 주어진 주문 정보를 DB 에 저장
      *
-     * <li>배송 예약할 때 반드시 필요한 {@link OrderDTO} {@code Fields} :
+     * <li>주문 정보 저장할 때 반드시 필요한 {@link OrderDTO} {@code Fields} :
      * <pre class="code">
      *      long id = [ null | empty ]
      *      String email;
@@ -129,7 +129,7 @@ public class OrderController {
     /**
      * 특정 주문의 정보를 반환
      *
-     * <li>배송 예약할 때 반드시 필요한 {@link OrderDTO} {@code Fields} :
+     * <li>주문 상세 정보 조회할 때 반드시 필요한 {@link OrderDTO} {@code Fields} :
      * <pre class="code">
      *      long id;
      * </pre>
@@ -168,7 +168,7 @@ public class OrderController {
      *
      * <p>이전 연관된 모든 {@link OrderItemEntity} 를 삭제하고, 주어진 {@link OrderDTO#getOrderItemDTOs()} 로 대체함.
      *
-     * <li>배송 예약할 때 반드시 필요한 {@link OrderDTO} {@code Fields} :
+     * <li>주문 수정할 때 반드시 필요한 {@link OrderDTO} {@code Fields} :
      * <pre class="code">
      *      long id;
      *      String email;
@@ -286,6 +286,18 @@ public class OrderController {
 
         return validatedList;
     }
+
+    /**
+     * 특정 주문과 관련된 제품 목록을 삭제하는 메서드
+     *
+     * <li>주문 상세 정보 조회할 때 반드시 필요한 {@link OrderDTO} {@code Fields} :
+     * <pre class="code">
+     *      long id;
+     * </pre>
+     *
+     * @param orderDTO 삭제할 주문 정보 {@code ID}
+     * @return {@link ResponseEntity}
+     */
     @Transactional
     @DeleteMapping("/delete")
     public ResponseEntity<?> deleteOrder(@RequestBody OrderDTO orderDTO) {

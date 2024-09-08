@@ -166,7 +166,7 @@ public class ProductController {
     /**
      * 특정 제품을 {@code DB} 에서 삭제하는 {@code EndPoint}.
      *
-     * <li>상품 정보 편집할 때 반드시 필요한 {@link ProductDTO} {@code Fields} :
+     * <li>상품 정보 삭제할 때 반드시 필요한 {@link ProductDTO} {@code Fields} :
      * <pre class="code">
      *      UUID productId;
      *  </pre>
