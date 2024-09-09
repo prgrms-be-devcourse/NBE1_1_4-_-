@@ -47,4 +47,23 @@ public class ProductService {
         productRepository.flush();
         return new ProductDTO(savedProduct);
     }
+
+    //    상품 수정
+    @Transactional
+    public ProductDTO updateProduct(UUID productId,ProductDTO productDTO){
+        Optional< ProductEntity> optionalUpdatedProduct=productRepository.findById(productId);
+//       해당 id를 가진 상품이 없으면
+        if(!optionalUpdatedProduct.isPresent()){
+            throw new NoSuchElementException("유효하지 않은 상품입니다.");
+        }
+        ProductEntity productEntity=optionalUpdatedProduct.get();
+
+//       현재 productDTO의 createdAt값이 null이므로 productEntity의  createdAt 속성값 대입해줌
+        productDTO.setCreatedAt(productEntity.getCreatedAt());
+        productDTO.setProductId(productId);
+        ProductEntity updatedProduct=productRepository.save(productDTO.toProductEntity());
+        productRepository.flush();
+        return new ProductDTO(updatedProduct);
+    }
+
 }
