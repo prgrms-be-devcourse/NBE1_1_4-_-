@@ -79,4 +79,16 @@ public class OrderService {
         return orderDTOS;
     }
 
+
+    //    주문 이메일로 주문 내역 조회
+    @Transactional
+    public  List<OrderDTO> getOrderByEmail(String email) {
+        List<OrderEntity> orderEntities=orderRepository.findByEmail(email);
+        List<OrderDTO> orderDTOS=new ArrayList<>();
+        for(OrderEntity orderEntity:orderEntities) {
+            orderDTOS.add(new OrderDTO(orderEntity));
+        }
+        return orderDTOS;
+    }
+
 }
