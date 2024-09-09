@@ -24,6 +24,16 @@ public class ProductService {
         return productList;
     }
 
+    //    상품명으로 조회
+    public List<ProductDTO> getProductByName(String name){
+        //       해당 이름을 가진 상품이 없으면 예외 throw
+        List<ProductEntity> productEntities =productRepository.findByProductName(name);
+        List<ProductDTO> productDTOS=new ArrayList<>();
+        for(ProductEntity productEntity:productEntities){
+            productDTOS.add(new ProductDTO(productEntity));
+        }
+        return productDTOS;
+    }
 
 
 }
