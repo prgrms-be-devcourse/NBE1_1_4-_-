@@ -67,5 +67,16 @@ public class OrderService {
         return orderDTO;
     }
 
+    //    전체 주문 내역 조회
+    @Transactional
+    public List<OrderDTO> getAllOrderList() {
+        List<OrderEntity>orderEntities=orderRepository.findAll();
+        List<OrderDTO> orderDTOS=new ArrayList<>();
+        for(OrderEntity orderEntity:orderEntities) {
+            System.out.println("orderEntity = " + orderEntity);
+            orderDTOS.add(new OrderDTO(orderEntity));
+        }
+        return orderDTOS;
+    }
 
 }
