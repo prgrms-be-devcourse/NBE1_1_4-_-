@@ -91,4 +91,15 @@ public class OrderService {
         return orderDTOS;
     }
 
+    // 사용자 이메일로 취소된 주문 내역만 조회
+    @Transactional
+    public List<OrderDTO> getCanceledOrderByEmail(String email) {
+        List<OrderEntity> canceledOrders = orderRepository.findByEmailAndOrderStatus(email, OrderStatus.CANCELED);
+        List<OrderDTO> orderDTOS = new ArrayList<>();
+        for (OrderEntity orderEntity : canceledOrders) {
+            orderDTOS.add(new OrderDTO(orderEntity));
+        }
+        return orderDTOS;
+    }
+
 }
