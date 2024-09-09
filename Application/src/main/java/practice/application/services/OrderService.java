@@ -112,4 +112,33 @@ public class OrderService {
         }
         return orderDTOS;
     }
+
+    // 사용자 이메일로 주문처리된 주문 내역만 조회
+    @Transactional
+    public List<OrderDTO> getOrderedOrderByEmail(String email) {
+        List<OrderEntity> orderedOrders = orderRepository.findByEmailAndOrderStatus(email, OrderStatus.ORDER);
+        List<OrderDTO> orderDTOS = new ArrayList<>();
+        for (OrderEntity orderEntity : orderedOrders) {
+            orderDTOS.add(new OrderDTO(orderEntity));
+        }
+        return orderDTOS;
+    }
+
+    //    주문 ID로 주문한 상품리스트 조회
+    @Transactional
+    public List<OrderItemDTO> getOrderItemsById(UUID orderId) {
+//    OrderId로 OrderItemEntity들 모두 불러와 리스트에 저장
+        List<OrderItemEntity> orderEntity=orderItemRepository.findAllByOrderId(orderId);
+        if(orderEntity.size()==0) {
+            throw new RuntimeException("Order not found");
+        }
+
+//    OrderItemEntity를 OrdeItemDTO로 변환
+        List<OrderItemDTO> orderItemDTOS=new ArrayList<>();
+        for(OrderItemEntity orderItemEntity:orderEntity) {
+            orderItemDTOS.add(new OrderItemDTO(orderItemEntity));
+        }
+        return orderItemDTOS;
+    }
+
 }
