@@ -65,5 +65,16 @@ public class ProductService {
         productRepository.flush();
         return new ProductDTO(updatedProduct);
     }
+    //    ID로 상품 삭제
+    @Transactional
+    public void deleteProduct(UUID productId){
+        Optional<ProductEntity> optionalProductEntity=productRepository.findById(productId);
+//       해당 id를 가진 상품이 없으면
+        if(!optionalProductEntity.isPresent()){
+            throw new NoSuchElementException("유효하지 않은 상품입니다.");
+        }
+        ProductEntity productEntity=optionalProductEntity.get();
+        productRepository.delete(productEntity);
+    }
 
 }
