@@ -12,3 +12,6 @@ spring:
       hibernate:
         show_sql: true  # SQL 쿼리 출력 활성화
         format_sql: true # SQL 쿼리 형식화
+  jwt:
+    expriration_time: 86400000
+    secret: c2VjcmV0S2V5c2VjcmV0S2V5c2VjcmV0S2V5c2VjcmV0S2V5c2VjcmV0S2V5c2VjcmV0S2V5c2VjcmV0S2V5c2VjcmV0S2V5c2VjcmV0S2V5c2VjcmV0S2V5

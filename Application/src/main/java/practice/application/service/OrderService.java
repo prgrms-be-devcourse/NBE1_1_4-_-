@@ -46,6 +46,17 @@ public class OrderService {
         return orderEntityList;
     }
 
+    @Transactional
+    public OrderEntity cancelOrder(String orderId) {
+        OrderEntity orderEntity = orderRepository.findFetchById(orderId).orElseThrow(() -> new NotFoundException("해당 주문을 찾을 수 없습니다"));
+
+        orderEntity.orderCancel();
+
+
+        return orderEntity;
+
+    }
+
 
 
 

@@ -34,6 +34,10 @@ public class OrderEntity extends BaseEntity{
     @OneToMany(mappedBy = "order", cascade = CascadeType.ALL)
     private List<OrdersItemEntity> ordersItemsList = new ArrayList<>();
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "member_id")
+    private MemberEntity member;
+
     public OrderEntity(String email, String postCode, List<OrdersItemEntity> ordersItemsList) {
         this.email = email;
         this.postCode = postCode;
@@ -49,8 +53,19 @@ public class OrderEntity extends BaseEntity{
         ordersItem.addOrderEntity(this);
     }
 
+    public void addMember(MemberEntity member) { // 연관관계 매핑
+        this.member = member;
+        member.getOrderEntityList().add(this);
+    }
+
     public void orderCancel(){  //주문 취소 로직
         this.status = OrderStatus.CANCEL;
+
+        for(OrdersItemEntity ordersItem : ordersItemsList){
+            int quantity = ordersItem.getQuantity();
+
+            ordersItem.getProduct().addQuantity(quantity);
+        }
     }
 
 

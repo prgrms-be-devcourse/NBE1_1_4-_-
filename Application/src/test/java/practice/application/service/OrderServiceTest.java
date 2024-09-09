@@ -11,7 +11,9 @@ import practice.application.models.DTO.OrderCreateDTO;
 import practice.application.models.DTO.OrderItemsDTO;
 import practice.application.models.OrderEntity;
 import practice.application.models.OrdersItemEntity;
+import practice.application.models.ProductEntity;
 import practice.application.repositories.OrderRepository;
+import practice.application.repositories.ProductRepository;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -27,6 +29,9 @@ class OrderServiceTest {
 
     @Autowired
     private OrderRepository orderRepository;
+
+    @Autowired
+    private ProductRepository productRepository;
 
     @Autowired
     private EntityManager em;
@@ -80,6 +85,23 @@ class OrderServiceTest {
             }
         }
 
+    }
+
+    @Test
+    public void 주문_취소() throws Exception {
+       //given
+        OrderEntity orderEntity = orderService.cancelOrder("d8bdddb3-8430-457b-b230-328a00bc3a75");
+
+        em.flush();
+        em.clear();
+
+        //when
+
+        ProductEntity product = productRepository.findById("a0680787-c0c2-430b-aaad-a1376cc550d5").get();
+
+
+        //then
+        Assertions.assertThat(product.getQuantity()).isEqualTo(50);
     }
 
 }

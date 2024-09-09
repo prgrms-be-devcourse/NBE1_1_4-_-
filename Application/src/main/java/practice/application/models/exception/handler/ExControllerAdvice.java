@@ -6,6 +6,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import practice.application.models.DTO.ExResponseDTO;
+import practice.application.models.exception.DuplicateEmailException;
 import practice.application.models.exception.NoStockException;
 import practice.application.models.exception.NotFoundException;
 import practice.application.models.exception.OrderAlreadyCancelledException;
@@ -30,6 +31,13 @@ public class ExControllerAdvice {
     public ExResponseDTO ExceptionHandler(OrderAlreadyCancelledException e) {
         return new ExResponseDTO("Bad", e.getMessage());
     }
+
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ExceptionHandler(DuplicateEmailException.class)
+    public ExResponseDTO ExceptionHandler(DuplicateEmailException e) {
+        return new ExResponseDTO("Bad", e.getMessage());
+    }
+
 
 
 
