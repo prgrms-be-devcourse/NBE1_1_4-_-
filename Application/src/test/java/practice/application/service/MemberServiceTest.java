@@ -5,9 +5,11 @@ import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.transaction.annotation.Transactional;
 import practice.application.models.Address;
 import practice.application.models.DTO.MemberJoinRequestDTO;
+import practice.application.models.DTO.MemberLoginRequestDTO;
 import practice.application.models.MemberEntity;
 import practice.application.models.enumType.UserType;
 import practice.application.models.exception.DuplicateEmailException;
@@ -66,6 +68,31 @@ class MemberServiceTest {
         assertThrows(DuplicateEmailException.class, ()->
                 memberService.save(memberJoinRequestDTO));
 
+       //then
+    }
+    
+    @Test
+    public void 로그인후_토큰값_잘찍히나() throws Exception {
+       //given
+        MemberLoginRequestDTO memberLoginRequestDTO = new MemberLoginRequestDTO("k12002@nate.com", "1234");
+
+        //when
+        String token = memberService.login(memberLoginRequestDTO);
+
+        //then
+
+        System.out.println("token = " + token);
+
+        
+    }
+
+    @Test
+    public void 로그인_예외처리() throws Exception {
+       //given
+        MemberLoginRequestDTO memberLoginRequestDTO = new MemberLoginRequestDTO("k12002@nate.com", "123");
+       //when
+        assertThrows(BadCredentialsException.class, ()->
+                memberService.login(memberLoginRequestDTO));
        //then
     }
 
