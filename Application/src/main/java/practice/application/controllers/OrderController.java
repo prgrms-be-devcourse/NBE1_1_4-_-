@@ -3,11 +3,11 @@ package practice.application.controllers;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import practice.application.models.dto.*;
-import practice.application.models.entities.OrderEntity;
-import practice.application.models.entities.OrderItemEntity;
-import practice.application.models.entities.ProductEntity;
+import practice.application.models.entities.*;
+import practice.application.services.LoggingService;
 import practice.application.services.OrderService;
 import practice.application.services.ProductService;
 
@@ -24,11 +24,13 @@ public class OrderController {
     //<editor-fold desc="Inits">
     private final OrderService orderService;
     private final ProductService productService;
+    private final LoggingService loggingService;
 
     @Autowired
-    public OrderController(OrderService orderService, ProductService productService) {
+    public OrderController(OrderService orderService, ProductService productService, LoggingService loggingService) {
         this.orderService   = orderService;
         this.productService = productService;
+        this.loggingService = loggingService;
     }
 
     private final Logger logger = Logger.getLogger(OrderController.class.getName());
@@ -59,7 +61,7 @@ public class OrderController {
     @Transactional
     @PostMapping("/purchase")
     public ResponseEntity<?> reserveOrder(
-            @RequestBody OrderDTO orderDTO
+            @RequestBody OrderDTO orderDTO, @AuthenticationPrincipal String userName
     ) {
         UUID orderId = orderDTO.getOrderId();
 
@@ -68,8 +70,15 @@ public class OrderController {
             orderDTO.setOrderId(null);
         }
 
+        MemberEntity member = loggingService.findByMemberName(userName);
+
+        if (member == null)
+            return ResponseEntity.badRequest()
+                                 .body("Failed to find member");
+
         OrderEntity orderEntity = orderService.createOrder(orderDTO.setOrderStatus(OrderStatus.PACKAGING)
-                                                                   .toEntity());
+                                                                   .toEntity()
+                                                                   .setMemberEntityIdentifier(member));
 
         List<OrderItemEntity> itemEntities = validateOrderItemListToEntity(orderEntity, orderDTO.getOrderItemDTOs());
 
@@ -97,8 +106,16 @@ public class OrderController {
     @GetMapping("/list")
     public ResponseEntity<?> showAllOrders(
             @RequestParam(value = "status", required = false) OrderStatus status,
-            @RequestParam(value = "verbose", defaultValue = "false") boolean verbose
+            @RequestParam(value = "verbose", defaultValue = "false") boolean verbose,
+            @AuthenticationPrincipal String userName
     ) {
+
+        MemberEntity member = loggingService.findByMemberName(userName);
+
+        if (member == null || !member.getRole()
+                                     .equals(MemberRole.ADMIN))
+            return ResponseEntity.badRequest()
+                                 .body("Listing orders requires administrator level");
 
         List<OrderEntity> searchResult = status == null ?
                                          orderService.getAllOrders() :
@@ -138,7 +155,7 @@ public class OrderController {
      * @return {@link ResponseEntity}
      */
     @GetMapping("/detail")
-    public ResponseEntity<?> showOrderDetail(@RequestBody OrderDTO orderDTO) {
+    public ResponseEntity<?> showOrderDetail(@RequestBody OrderDTO orderDTO, @AuthenticationPrincipal String userName) {
         UUID id = orderDTO.getOrderId();
 
         if (id == null)
@@ -150,6 +167,17 @@ public class OrderController {
         if (orderEntity == null)
             return ResponseEntity.badRequest()
                                  .body("No such order with id [" + id + "] found.");
+
+        MemberEntity member = loggingService.findByMemberName(userName);
+
+        if (member != null && member.getRole()
+                                    .equals(MemberRole.ADMIN)) {
+            logger.info("[showOrderDetail] - By passing via administrator level");
+        }
+        else if (!orderEntity.getMemberEntityIdentifier()
+                             .equals(member))
+            return ResponseEntity.badRequest()
+                                 .body("Only ordered user can view details");
 
         List<OrderItemDTO> orderedItems = orderEntity.getOrderItems()
                                                      .stream()

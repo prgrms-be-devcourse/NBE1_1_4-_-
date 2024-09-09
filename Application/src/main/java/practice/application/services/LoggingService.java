@@ -38,6 +38,10 @@ public class LoggingService {
                searchResult;
     }
 
+    public MemberEntity findByMemberName(String memberName) {
+        return memberRepo.findByMemberName(memberName);
+    }
+
     public boolean isThereDuplicates(String id) {
         return memberRepo.findByMemberId(id) != null;
     }
