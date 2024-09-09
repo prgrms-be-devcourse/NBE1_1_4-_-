@@ -127,13 +127,13 @@ public class OrderService {
     //    주문 ID로 주문한 상품리스트 조회
     @Transactional
     public List<OrderItemDTO> getOrderItemsById(UUID orderId) {
-//    OrderId로 OrderItemEntity들 모두 불러와 리스트에 저장
+        //    OrderId로 OrderItemEntity들 모두 불러와 리스트에 저장
         List<OrderItemEntity> orderEntity=orderItemRepository.findAllByOrderId(orderId);
         if(orderEntity.size()==0) {
             throw new RuntimeException("Order not found");
         }
 
-//    OrderItemEntity를 OrdeItemDTO로 변환
+        //    OrderItemEntity를 OrdeItemDTO로 변환
         List<OrderItemDTO> orderItemDTOS=new ArrayList<>();
         for(OrderItemEntity orderItemEntity:orderEntity) {
             orderItemDTOS.add(new OrderItemDTO(orderItemEntity));
@@ -141,4 +141,39 @@ public class OrderService {
         return orderItemDTOS;
     }
 
+    //    주문아이디로 주문 취소
+    @Transactional
+    public void cancelOrderById(UUID orderId) {
+        // 주문을 조회
+        OrderEntity orderEntity = orderRepository.findById(orderId)
+                .orElseThrow(() -> new RuntimeException("Order not found"));
+
+        // 주문 상태를 CANCELED로 업데이트
+        orderEntity.setOrderStatus(OrderStatus.CANCELED);
+
+        // 변경된 주문을 저장
+        orderRepository.save(orderEntity);
+    }
+
+    // 매일 오후 2시에 실행되는 메서드
+    @Scheduled(cron = "0 0 14 * * ?")
+    public void processShipments() {
+        // 현재 날짜와 시간
+        LocalDate today = LocalDate.now();
+        LocalDateTime endOfDay = today.atTime(LocalTime.of(14, 0)); // 오늘 오후 2시
+
+        // 어제의 오후 2시
+        LocalDateTime startOfDay = endOfDay.minusDays(1);
+
+        List<OrderEntity> orders = orderRepository.findOrdersByDateRange(startOfDay, endOfDay);
+
+        for (OrderEntity order : orders) {
+            // 주문 상태가 'ORDER'인 것만 처리
+            if (order.getOrderStatus() == OrderStatus.ORDER) {
+                // 배송 처리 로직 구현
+                order.setOrderStatus(OrderStatus.DELIVERY);
+                orderRepository.save(order);
+            }
+        }
+    }
 }
