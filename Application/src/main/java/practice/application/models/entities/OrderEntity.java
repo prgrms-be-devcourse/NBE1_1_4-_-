@@ -61,6 +61,10 @@ public class OrderEntity implements EntityContracts<OrderDTO> {
     @OneToMany(mappedBy = "orderEntity", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
     private Set<OrderItemEntity> orderItems = new LinkedHashSet<>();
 
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "member_identifier", nullable = false)
+    private MemberEntity memberEntityIdentifier;
+
     /**
      * {@inheritDoc}
      *
