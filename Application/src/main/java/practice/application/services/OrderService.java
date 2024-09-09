@@ -102,4 +102,14 @@ public class OrderService {
         return orderDTOS;
     }
 
+    // 사용자 이메일로 배송처리된 주문 내역만 조회
+    @Transactional
+    public List<OrderDTO> getDeliveredOrderByEmail(String email) {
+        List<OrderEntity> deliveredOrders = orderRepository.findByEmailAndOrderStatus(email, OrderStatus.DELIVERY);
+        List<OrderDTO> orderDTOS = new ArrayList<>();
+        for (OrderEntity orderEntity : deliveredOrders) {
+            orderDTOS.add(new OrderDTO(orderEntity));
+        }
+        return orderDTOS;
+    }
 }
