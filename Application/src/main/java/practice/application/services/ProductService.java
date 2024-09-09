@@ -1,6 +1,7 @@
 package practice.application.services;
 
 
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import practice.application.models.dto.ProductDTO;
@@ -35,5 +36,15 @@ public class ProductService {
         return productDTOS;
     }
 
+    //    상품 등록
+    @Transactional
+    public ProductDTO addProduct(ProductDTO productDTO){
+//      @CreationTimestamp,@UpdateTimestamp는 데이터베이스에 저장될 때만 설정되기 때문에 save()후 반환된 entity객체의 생성,수정시각이 null로 되어있음.
+//      그러므로 DB에서 id로 다시 조회해서 날짜시각정보 저장하자
+        ProductEntity savedProduct=productRepository.save(productDTO.toProductEntity());
 
+//        flush를 사용하여  즉시 데이터베이스에 변경 사항을 반영하도록,,생성된 타임스탬프 반영
+        productRepository.flush();
+        return new ProductDTO(savedProduct);
+    }
 }
