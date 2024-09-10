@@ -2,12 +2,12 @@ package practice.application.service;
 
 import jakarta.persistence.EntityManager;
 import org.assertj.core.api.Assertions;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.transaction.annotation.Transactional;
-import practice.application.models.Address;
 import practice.application.models.DTO.MemberJoinRequestDTO;
 import practice.application.models.DTO.MemberLoginRequestDTO;
 import practice.application.models.MemberEntity;
@@ -15,7 +15,7 @@ import practice.application.models.enumType.UserType;
 import practice.application.models.exception.DuplicateEmailException;
 import practice.application.repositories.MemberRepository;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @SpringBootTest
 @Transactional
@@ -32,7 +32,8 @@ class MemberServiceTest {
     private EntityManager em;
 
     @Test
-    public void 멤버_서비스_테스트() throws Exception {
+    @DisplayName("멤버 서비스 테스트")
+    public void memberServiceTest() throws Exception {
        //given
         MemberJoinRequestDTO memberJoinRequestDTO = new MemberJoinRequestDTO("k12002@nate.com", "리", "1234", "010", "도봉구", "84", "집주소", UserType.CUSTOMER);
 
@@ -51,7 +52,8 @@ class MemberServiceTest {
     }
 
     @Test
-    public void 중복_이메일_테스트() throws Exception {
+    @DisplayName("중복 이메일 테스트")
+    public void duplicateEmailTest() throws Exception {
        //given
 
         MemberJoinRequestDTO memberJoinRequestDTO = new MemberJoinRequestDTO("k12002@nate.com", "리", "1234", "010", "도봉구", "84", "집주소", UserType.CUSTOMER);
@@ -70,9 +72,10 @@ class MemberServiceTest {
 
        //then
     }
-    
+
     @Test
-    public void 로그인후_토큰값_잘찍히나() throws Exception {
+    @DisplayName("로그인 후 토큰 값 잘 찍히나")
+    public void testTokenOnLogin() throws Exception {
        //given
         MemberLoginRequestDTO memberLoginRequestDTO = new MemberLoginRequestDTO("k12002@nate.com", "1234");
 
@@ -83,11 +86,12 @@ class MemberServiceTest {
 
         System.out.println("token = " + token);
 
-        
+
     }
 
     @Test
-    public void 로그인_예외처리() throws Exception {
+    @DisplayName("로그인 예외처리")
+    public void loginExceptionHandlingTest() throws Exception {
        //given
         MemberLoginRequestDTO memberLoginRequestDTO = new MemberLoginRequestDTO("k12002@nate.com", "123");
        //when

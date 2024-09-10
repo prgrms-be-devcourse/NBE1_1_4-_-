@@ -2,10 +2,11 @@ package practice.application.controllers;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.web.bind.annotation.*;
-import practice.application.models.DTO.MemberJoinRequestDTO;
-import practice.application.models.DTO.MemberLoginRequestDTO;
-import practice.application.models.DTO.MemberLoginResponseDTO;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+import practice.application.models.DTO.*;
 import practice.application.service.MemberService;
 
 @RestController
@@ -40,7 +41,18 @@ public class MemberController {
         return new MemberLoginResponseDTO(token, memberLoginRequestDTO.getEmail());
     }
 
+    /**
+     * 유저 로그인 시 Access, Refresh 토큰 담아서 응답하는 endpoint
+     * @param memberLoginRequestDTO 로그인 요청 {@code DTO}
+     * @return {@link MemberLoginResponseWithTokensDTO}
+     * @see #loginMember(MemberLoginRequestDTO)
+     */
+    @PostMapping("/login-with-token")
+    public MemberLoginResponseWithTokensDTO loginMemberWithToken(@RequestBody MemberLoginRequestDTO memberLoginRequestDTO){
+        TokenContainer tokens = memberService.loginWithTokenContainer(memberLoginRequestDTO);
 
+        return new MemberLoginResponseWithTokensDTO(memberLoginRequestDTO.getEmail(), tokens);
+    }
 
 
 }
