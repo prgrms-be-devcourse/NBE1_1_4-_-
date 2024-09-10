@@ -63,7 +63,7 @@ public class JwtUtil {
      * @return 엑세스 토큰 {@code String}
      */
     public String createAccessToken(MemberEntity member) {
-        return createToken(member, accessTokensecretKey, accessTokenExpTime);
+        return createTokens(member, accessTokensecretKey, accessTokenExpTime);
     }
 
     /**
@@ -73,7 +73,7 @@ public class JwtUtil {
      * @return 리프래쉬 토큰 {@code String}
      */
     public String createRefreshToken(MemberEntity member) {
-        return createToken(member, refreshTokenSecretKey, refreshTokenExpTime);
+        return createTokens(member, refreshTokenSecretKey, refreshTokenExpTime);
     }
 
     /**
@@ -82,9 +82,9 @@ public class JwtUtil {
      * @param member 멤버 엔티티
      * @return 토큰 2 개 담긴 {@link TokenContainer}
      */
-    public TokenContainer createToken(MemberEntity member) {
-        String accessToken = createToken(member, accessTokensecretKey, accessTokenExpTime);
-        String refreshToken = createToken(member, refreshTokenSecretKey, refreshTokenExpTime);
+    public TokenContainer createTokens(MemberEntity member) {
+        String accessToken = createTokens(member, accessTokensecretKey, accessTokenExpTime);
+        String refreshToken = createTokens(member, refreshTokenSecretKey, refreshTokenExpTime);
         return new TokenContainer(accessToken, refreshToken);
     }
 
@@ -96,7 +96,7 @@ public class JwtUtil {
      * @param exp       토큰 만료 시간 {@code (ms)}
      * @return 토큰 {@code (String)}
      */
-    private String createToken(MemberEntity member, SecretKey secretKey, long exp) {
+    private String createTokens(MemberEntity member, SecretKey secretKey, long exp) {
         return Jwts
                 .builder()
                 .claim("memberId", member.getId())
@@ -182,6 +182,10 @@ public class JwtUtil {
     }
 
     // TODO 사용되는 곳 없는데 그냥 isExpired(String token, SecretKey key) 로 시그니처 바꿔도 되는지 확인
+    /**
+     * @deprecated 사용되는 곳 없는데 그냥 isExpired(String token, SecretKey key) 로 사용하는게 좋을 수도 있음
+     * @see #isExpired(String, SecretKey)
+     */
     public Boolean isExpired(String token) {
 
         try {

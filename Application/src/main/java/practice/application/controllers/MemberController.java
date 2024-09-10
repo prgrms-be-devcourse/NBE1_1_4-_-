@@ -25,7 +25,15 @@ public class MemberController {
     }
 
 
+    /**
+     * 유저 로그인 시 Access 토큰 담아서 응답하는 endpoint
+     * @deprecated 이제 로그인 반응에 토큰 2 개 담아야 되므로 삭제 or 변경될 가능성 높음.
+     * @param memberLoginRequestDTO 로그인 요청 {@code DTO}
+     * @return {@link MemberLoginResponseDTO}
+     * @see #loginMemberWithToken(MemberLoginRequestDTO)
+     */
     @PostMapping("/login")
+    @Deprecated
     public MemberLoginResponseDTO loginMember(@RequestBody MemberLoginRequestDTO memberLoginRequestDTO){
         String token = memberService.login(memberLoginRequestDTO);
 
