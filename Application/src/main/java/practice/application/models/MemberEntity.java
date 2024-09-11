@@ -50,12 +50,12 @@ public class MemberEntity {
     }
 
     public MembershipGrade getGrade() {
-        if (this.totalAmount < 1000000) {
-            return MembershipGrade.VIP;
-        } else if (this.totalAmount < 5000000) {
-            return MembershipGrade.VVIP;
-        } else {
+        if (this.totalAmount < 100000) {
             return MembershipGrade.GOLD;
+        } else if (this.totalAmount < 500000) {
+            return MembershipGrade.VIP;
+        } else {
+            return MembershipGrade.VVIP;
         }
     }
 
