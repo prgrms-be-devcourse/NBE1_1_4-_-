@@ -10,6 +10,8 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import practice.application.models.Jwt.CustomAccessDeniedHandler;
+import practice.application.models.Jwt.CustomAuthenticationEntryPoint;
 import practice.application.models.Jwt.JwtFilter;
 import practice.application.models.Jwt.JwtUtil;
 import practice.application.service.CustomUserDetailService;
@@ -21,6 +23,8 @@ public class SpringSecurity {
 
     private final JwtUtil jwtUtil;
     private final CustomUserDetailService customUserDetailService;
+    private final CustomAccessDeniedHandler accessDeniedHandler; // 인증은 되었지만 권한이 없을경우
+    private final CustomAuthenticationEntryPoint authenticationEntryPoint;  // 인증 되지 않은 사용자에 대한 excepton 처리
 
     @Bean
     public BCryptPasswordEncoder bCryptPasswordEncoder() {
@@ -46,6 +50,9 @@ public class SpringSecurity {
                 .anyRequest().authenticated());
 
         http.addFilterBefore(new JwtFilter(customUserDetailService, jwtUtil), UsernamePasswordAuthenticationFilter.class);
+
+        http.exceptionHandling((exceptionHandling) -> exceptionHandling.accessDeniedHandler(accessDeniedHandler)
+                .authenticationEntryPoint(authenticationEntryPoint));
 
 
         return http.build();
