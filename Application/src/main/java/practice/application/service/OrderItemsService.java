@@ -23,16 +23,26 @@ public class OrderItemsService {
     private final ProductRepository productRepository;
 
 
-
-
+    @Transactional
     public List<OrdersItemEntity> createOrderItems(List<OrderItemsDTO> orderItemsDTOList){
         List<OrdersItemEntity> ordersItemEntities = new ArrayList<>();
 
-        for(OrderItemsDTO orderItemsDTO : orderItemsDTOList){
-            ProductEntity product = productRepository.findById(orderItemsDTO.getProductId()).orElseThrow(() -> new NotFoundException("해당 제품은 없습니다"));
+        List<String> orderItemsIds = new ArrayList<>();
 
-            ordersItemEntities.add(new OrdersItemEntity(orderItemsDTO.getQuantity(), product));
+        for(OrderItemsDTO orderItemsDTO : orderItemsDTOList){
+            orderItemsIds.add(orderItemsDTO.getProductId());
+
         }
+
+        List<ProductEntity> productEntities = productRepository.findByProductId(orderItemsIds);
+
+        if(productEntities.size() == 0){
+            throw new NotFoundException("Product not found");
+        }
+        for(int i = 0; i < productEntities.size(); i++){
+            ordersItemEntities.add(new OrdersItemEntity(orderItemsDTOList.get(i).getQuantity(), productEntities.get(i)));
+        }
+
 
         return ordersItemEntities;
     }

@@ -13,8 +13,9 @@ import practice.application.models.OrderEntity;
 import practice.application.models.OrdersItemEntity;
 import practice.application.models.enumType.OrderStatus;
 import practice.application.models.exception.NotFoundException;
-import practice.application.models.exception.ImpossibleCancelException;
+
 import practice.application.repositories.OrderRepository;
+import practice.application.models.exception.ImpossibleCancelException;
 
 import java.util.List;
 import java.util.Optional;
@@ -34,6 +35,7 @@ public class OrderService {
         if(orderEntityList.isEmpty()){
             throw new NotFoundException("해당 이메일에 대한 주문은 없습니다");
         }
+
 
         return orderEntityList;
     }
