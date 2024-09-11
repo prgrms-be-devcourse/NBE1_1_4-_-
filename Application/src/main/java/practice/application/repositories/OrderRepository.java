@@ -12,7 +12,7 @@ import java.util.Optional;
 
 public interface OrderRepository extends JpaRepository<OrderEntity, String> {
 
-    @Query("SELECT distinct o FROM OrderEntity o join fetch o.ordersItemsList oi join fetch oi.product where o.member = :member and o.status = :status") // 이메일과 주문이 취소된건 조회 안함
+    @Query("SELECT distinct o FROM OrderEntity o join fetch o.ordersItemsList oi join fetch oi.product where o.member = :member and o.status = :status") // 주어진 status 와 일치하는 주문만 조회
     Optional<List<OrderEntity>> findByMemberAndStatus(@Param("member") MemberEntity member, @Param("status") OrderStatus orderStatus);
 
     @Query("select distinct o FROM OrderEntity o join fetch o.ordersItemsList oi join fetch oi.product where o.id = :orderId")
