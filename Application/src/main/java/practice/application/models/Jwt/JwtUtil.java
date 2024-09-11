@@ -88,6 +88,7 @@ public class JwtUtil {
         return new TokenContainer(accessToken, refreshToken);
     }
 
+
     /**
      * 토큰 생성 메서드
      *
@@ -103,7 +104,7 @@ public class JwtUtil {
                 .claim("email", member.getEmail())
                 .claim("role", member.getUserType())
                 .issuedAt(new Date(System.currentTimeMillis()))
-                .expiration(new Date(System.currentTimeMillis() + exp))
+                .setExpiration(new Date(System.currentTimeMillis() + exp))
                 .signWith(secretKey)
                 .compact();
 
@@ -115,6 +116,7 @@ public class JwtUtil {
      * @param accessToken 엑세스 토큰
      * @return {@code User ID}
      */
+
     public Long getUserIdWithAccessToken(String accessToken) {
         return Long.valueOf(parseClaims(accessTokensecretKey, accessToken).get("memberId", String.class));
     }
