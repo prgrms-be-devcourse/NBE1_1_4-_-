@@ -17,4 +17,6 @@ public interface OrderRepository extends JpaRepository<OrderEntity, String> {
 
     @Query("select distinct o FROM OrderEntity o join fetch o.ordersItemsList oi join fetch oi.product where o.id = :orderId")
     Optional<OrderEntity> findFetchById(@Param("orderId") String orderId);
+
+    Optional<OrderEntity> findByMemberAndStatus(MemberEntity member, OrderStatus orderStatus);
 }
