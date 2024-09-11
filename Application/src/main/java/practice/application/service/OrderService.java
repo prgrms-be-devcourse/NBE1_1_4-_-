@@ -34,12 +34,12 @@ public class OrderService {
 
         List<OrdersItemEntity> orderItems = orderItemsService.createOrderItems(orderCreateDTO.getOrderItemsDTOS());
 
+        // 주문 엔티티 생성
+        OrderEntity orderEntity = new OrderEntity(orderCreateDTO.getEmail(), orderCreateDTO.getPostCode(), orderItems);
+
         // 회원 찾기
         MemberEntity member = memberRepository.findByEmail(orderCreateDTO.getEmail())
                 .orElseThrow(() -> new NotFoundException("해당 회원을 찾을 수 없습니다"));
-
-        // 주문 엔티티 생성
-        OrderEntity orderEntity = new OrderEntity(orderCreateDTO.getEmail(), orderCreateDTO.getPostCode(), orderItems);
 
         // 등급별 할인 적용
         int originalPrice = orderEntity.getSum();
@@ -48,14 +48,14 @@ public class OrderService {
         // 할인된 가격으로 주문 금액 업데이트
         orderEntity.setSum(discountedPrice);
 
+        // 회원의 총 결제 금액 업데이트
+        member.updateTotalAmount((int) discountedPrice);
 
         // 주문과 회원 매핑
         orderEntity.addMember(member);
 
         // 주문 저장
         OrderEntity savedOrder = orderRepository.save(orderEntity);
-
-
 
         return savedOrder;
     }
@@ -77,6 +77,9 @@ public class OrderService {
 
         orderEntity.orderCancel();
 
+        MemberEntity member = orderEntity.getMember();
+
+        member.updateTotalAmountOnCancellation(orderEntity.getSum()); //주문 취소로 인한 총 결제 금액 감소
 
         return orderEntity;
 
