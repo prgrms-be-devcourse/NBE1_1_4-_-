@@ -52,6 +52,10 @@ public class OrderEntity extends BaseEntity{
     public void addOrderItem(OrdersItemEntity ordersItem) { //양방향
         ordersItemsList.add(ordersItem);
         ordersItem.addOrderEntity(this);
+        // 회원의 총 금액 업데이트
+        if (this.member != null) {
+            this.member.updateTotalAmount(ordersItem.getPrice());
+        }
     }
 
     public void addMember(MemberEntity member) { // 연관관계 매핑
@@ -61,11 +65,18 @@ public class OrderEntity extends BaseEntity{
 
     public void orderCancel(){  //주문 취소 로직
         this.status = OrderStatus.CANCELED;
+        int totalCancelAmount = 0;
 
         for(OrdersItemEntity ordersItem : ordersItemsList){
             int quantity = ordersItem.getQuantity();
+            int price = ordersItem.getPrice();
 
+            totalCancelAmount += price;
             ordersItem.getProduct().addQuantity(quantity);
+        }
+
+        if (this.member != null) {
+            this.member.updateTotalAmountOnCancellation(totalCancelAmount);
         }
     }
 
