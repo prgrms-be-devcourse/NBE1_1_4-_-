@@ -2,10 +2,7 @@ package practice.application.controllers;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import practice.application.models.DTO.*;
 import practice.application.service.MemberService;
 
@@ -83,8 +80,7 @@ public class MemberController {
      * @param logoutRequestDTO 로그아웃 요청 {@code DTO}
      * @return {@link MemberLogoutResponseDTO}
      */
-    @PostMapping("/logout")
-    // TODO Post 가 좋나 Patch 가 좋나?
+    @PatchMapping("/logout")
     public MemberLogoutResponseDTO logoutMember(@RequestBody MemberLogoutRequestDTO logoutRequestDTO) {
         return memberService.logout(logoutRequestDTO);
     }

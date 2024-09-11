@@ -112,7 +112,6 @@ public class MemberService {
      * @throws NotFoundException 요청 이메일에 해당하는 계정 없을 시
      */
     @Transactional
-    // TODO 지금은 이메일만 맞으면 refresh 토큰 없애는데 만약 누가 악의적으로 다른 사람 이메일 넣어서 refresh 토큰 없어면 어떠캄??
     public MemberLogoutResponseDTO logout(MemberLogoutRequestDTO logoutRequestDTO) {
         MemberEntity member = memberRepository
                 .findByEmail(logoutRequestDTO.getEmail())
@@ -120,8 +119,6 @@ public class MemberService {
 
         String refreshToken = member.getRefreshToken();
         member.setRefreshToken(null);
-
-        memberRepository.save(member);
 
         return new MemberLogoutResponseDTO(
                 "성공적으로 로그아웃 되었습니다.", "Refresh token [" + refreshToken + "] has been expired.");
