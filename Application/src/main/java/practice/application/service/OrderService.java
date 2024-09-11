@@ -38,7 +38,7 @@ public class OrderService {
 
 
     public List<OrderEntity> findEmail(String email){
-        List<OrderEntity> orderEntityList = orderRepository.findByEmail(email, OrderStatus.CANCEL).orElseThrow(() -> new NotFoundException("해당 이메일에 대한 주문은 없습니다"));
+        List<OrderEntity> orderEntityList = orderRepository.findByEmail(email, OrderStatus.CANCELED).orElseThrow(() -> new NotFoundException("해당 이메일에 대한 주문은 없습니다"));
 
         if(orderEntityList.isEmpty()){
           throw new NotFoundException("해당 이메일에 대한 주문은 없습니다");
@@ -61,7 +61,6 @@ public class OrderService {
     @Scheduled(cron="0 0 14 * * ?")
     public void processShipments(){
     //주문 상태가 PAYMENT_CONFIRMED인 Order들만 List로 받아오자.
-
     }
 
 

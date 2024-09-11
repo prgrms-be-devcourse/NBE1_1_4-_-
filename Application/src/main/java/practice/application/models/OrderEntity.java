@@ -41,7 +41,8 @@ public class OrderEntity extends BaseEntity{
     public OrderEntity(String email, String postCode, List<OrdersItemEntity> ordersItemsList) {
         this.email = email;
         this.postCode = postCode;
-        this.status = OrderStatus.ORDER;
+//        this.status = OrderStatus.ORDER;
+        this.status = OrderStatus.RESERVED;
         for(OrdersItemEntity ordersItem : ordersItemsList){  // 주문 시  총 값
             addOrderItem(ordersItem);
             this.sum += ordersItem.getPrice();
@@ -59,7 +60,7 @@ public class OrderEntity extends BaseEntity{
     }
 
     public void orderCancel(){  //주문 취소 로직
-        this.status = OrderStatus.CANCEL;
+        this.status = OrderStatus.CANCELED;
 
         for(OrdersItemEntity ordersItem : ordersItemsList){
             int quantity = ordersItem.getQuantity();
