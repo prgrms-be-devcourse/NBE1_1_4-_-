@@ -38,7 +38,7 @@ public class MemberEntity {
     @Embedded
     private Address address;
 
-    private int totalAmount = 0; // 추가된 필드
+    private int totalAmount = 0; // 현재까지 총 결제 금액
 
     public MemberEntity(String email, String name, String password, String phoneNumber, UserType userType, Address address) {
         this.email = email;
