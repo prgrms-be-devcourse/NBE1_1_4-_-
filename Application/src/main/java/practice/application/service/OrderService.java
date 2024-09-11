@@ -86,7 +86,7 @@ public class OrderService {
     @Scheduled(cron="0 0 14 * * ?")
     @Transactional
     public void deliverConfirmedOrders(){
-        List<OrderEntity>orderEntityList=orderRepository.findByOrderStatus(OrderStatus.PAYMENT_CONFIRMED).orElseThrow(()->new NotFoundException("결제된 주문을 찾을 수 없습니다"));
+        List<OrderEntity>orderEntityList=orderRepository.findOrdersByStatus(OrderStatus.PAYMENT_CONFIRMED).orElseThrow(()->new NotFoundException("결제된 주문을 찾을 수 없습니다"));
         for(OrderEntity orderEntity:orderEntityList){
             orderEntity.updateOrderStatus(OrderStatus.DELIVERED);
             orderRepository.save(orderEntity);

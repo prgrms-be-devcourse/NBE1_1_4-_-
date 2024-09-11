@@ -20,5 +20,5 @@ public interface OrderRepository extends JpaRepository<OrderEntity, String> {
 
 
     @Query("select o from OrderEntity o where o.status = :status")
-    Optional<List<OrderEntity>> findByOrderStatus(@Param("status") OrderStatus status);
+    Optional<List<OrderEntity>> findOrdersByStatus(@Param("status") OrderStatus status);
 }
