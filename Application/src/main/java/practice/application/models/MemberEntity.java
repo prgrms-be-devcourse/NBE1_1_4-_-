@@ -37,6 +37,8 @@ public class MemberEntity {
     @Embedded
     private Address address;
 
+    private int totalAmount = 0; // 추가된 필드
+
     public MemberEntity(String email, String name, String password, String phoneNumber, UserType userType, Address address) {
         this.email = email;
         this.name = name;
@@ -49,4 +51,13 @@ public class MemberEntity {
     public void encodePassword(String password){
         this.password = password;
     }
+
+    public void updateTotalAmount(int amount) {
+        this.totalAmount += amount;
+    }
+
+    public void updateTotalAmountOnCancellation(int amount) {
+        this.totalAmount -= amount;
+    }
+
 }
