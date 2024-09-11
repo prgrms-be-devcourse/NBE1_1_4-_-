@@ -19,7 +19,7 @@ public class MemberController {
     private final MemberService memberService;
 
     @PostMapping()
-    public Long joinMember(@RequestBody MemberJoinRequestDTO memberJoinRequestDTO){
+    public Long joinMember(@RequestBody MemberJoinRequestDTO memberJoinRequestDTO) {
         Long save = memberService.save(memberJoinRequestDTO);
 
         return save;
@@ -28,14 +28,15 @@ public class MemberController {
 
     /**
      * 유저 로그인 시 Access 토큰 담아서 응답하는 endpoint
-     * @deprecated 이제 로그인 반응에 토큰 2 개 담아야 되므로 삭제 or 변경될 가능성 높음.
+     *
      * @param memberLoginRequestDTO 로그인 요청 {@code DTO}
      * @return {@link MemberLoginResponseDTO}
      * @see #loginMemberWithToken(MemberLoginRequestDTO)
+     * @deprecated 이제 로그인 반응에 토큰 2 개 담아야 되므로 삭제 or 변경될 가능성 높음.
      */
     @PostMapping("/login")
     @Deprecated
-    public MemberLoginResponseDTO loginMember(@RequestBody MemberLoginRequestDTO memberLoginRequestDTO){
+    public MemberLoginResponseDTO loginMember(@RequestBody MemberLoginRequestDTO memberLoginRequestDTO) {
         String token = memberService.login(memberLoginRequestDTO);
 
         return new MemberLoginResponseDTO(token, memberLoginRequestDTO.getEmail());
@@ -43,16 +44,29 @@ public class MemberController {
 
     /**
      * 유저 로그인 시 Access, Refresh 토큰 담아서 응답하는 endpoint
+     *
      * @param memberLoginRequestDTO 로그인 요청 {@code DTO}
      * @return {@link MemberLoginResponseWithTokensDTO}
      * @see #loginMember(MemberLoginRequestDTO)
      */
     @PostMapping("/login-with-token")
-    public MemberLoginResponseWithTokensDTO loginMemberWithToken(@RequestBody MemberLoginRequestDTO memberLoginRequestDTO){
+    public MemberLoginResponseWithTokensDTO loginMemberWithToken(
+            @RequestBody MemberLoginRequestDTO memberLoginRequestDTO
+    ) {
         TokenContainer tokens = memberService.loginWithTokenContainer(memberLoginRequestDTO);
 
         return new MemberLoginResponseWithTokensDTO(memberLoginRequestDTO.getEmail(), tokens);
     }
 
-
+    /**
+     * 유저 로그아웃 요청으로 Refresh 토큰 없애는 endpoint
+     *
+     * @param logoutRequestDTO 로그아웃 요청 {@code DTO}
+     * @return {@link MemberLogoutResponseDTO}
+     */
+    @PostMapping("/logout")
+    // TODO Post 가 좋나 Patch 가 좋나?
+    public MemberLogoutResponseDTO logoutMember(@RequestBody MemberLogoutRequestDTO logoutRequestDTO) {
+        return memberService.logout(logoutRequestDTO);
+    }
 }

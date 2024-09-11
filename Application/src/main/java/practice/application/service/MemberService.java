@@ -104,9 +104,27 @@ public class MemberService {
     }
 
 
-        @Transactional
-        public void logout(MemberLogoutDTO memberLogoutDTO){
+    /**
+     * 로그아웃 요청 받아서 DB refresh 토큰 없애는 메서드
+     *
+     * @param logoutRequestDTO 로그아웃 요청 {@code DTO}
+     * @return {@link MemberLogoutResponseDTO}
+     * @throws NotFoundException 요청 이메일에 해당하는 계정 없을 시
+     */
+    @Transactional
+    // TODO 지금은 이메일만 맞으면 refresh 토큰 없애는데 만약 누가 악의적으로 다른 사람 이메일 넣어서 refresh 토큰 없어면 어떠캄??
+    public MemberLogoutResponseDTO logout(MemberLogoutRequestDTO logoutRequestDTO) {
+        MemberEntity member = memberRepository
+                .findByEmail(logoutRequestDTO.getEmail())
+                .orElseThrow(() -> new NotFoundException("이메일이 존재하지 않습니다"));
 
-        }
+        String refreshToken = member.getRefreshToken();
+        member.setRefreshToken(null);
 
+        memberRepository.save(member);
+
+        return new MemberLogoutResponseDTO(
+                "성공적으로 로그아웃 되었습니다.", "Refresh token [" + refreshToken + "] has been expired.");
     }
+
+}
