@@ -99,7 +99,7 @@ public class JwtUtil {
     private String createTokens(MemberEntity member, SecretKey secretKey, long exp) {
         return Jwts
                 .builder()
-                .claim("memberId", member.getId())
+                .claim("memberId", String.valueOf(member.getId()))
                 .claim("email", member.getEmail())
                 .claim("role", member.getUserType())
                 .issuedAt(new Date(System.currentTimeMillis()))
@@ -116,7 +116,7 @@ public class JwtUtil {
      * @return {@code User ID}
      */
     public Long getUserIdWithAccessToken(String accessToken) {
-        return parseClaims(accessTokensecretKey, accessToken).get("memberId", Long.class);
+        return Long.valueOf(parseClaims(accessTokensecretKey, accessToken).get("memberId", String.class));
     }
 
     /**
@@ -126,7 +126,7 @@ public class JwtUtil {
      * @return {@code User ID}
      */
     public Long getUserIdWithRefreshToken(String refreshToken) {
-        return parseClaims(refreshTokenSecretKey, refreshToken).get("memberId", Long.class);
+        return Long.valueOf(parseClaims(refreshTokenSecretKey, refreshToken).get("memberId", String.class));
     }
 
     /**
