@@ -84,4 +84,22 @@ public class MemberController {
     public MemberLogoutResponseDTO logoutMember(@RequestBody MemberLogoutRequestDTO logoutRequestDTO) {
         return memberService.logout(logoutRequestDTO);
     }
+
+    /**
+     * Refresh 토큰으로 Access, Refresh 토큰 재생성해 제공하는 endpoint
+     *
+     * @param regenerateTokenRequestDTO 토큰 재생성 요청용 {@code DTO}
+     * @return {@link RegenerateTokenResponseDTO}
+     * @see MemberService#regenerateTokensViaRefreshToken(String)
+     */
+    @PatchMapping("/re-generate-token")
+    public RegenerateTokenResponseDTO regenerateTokens(
+            @RequestBody RegenerateTokenRequestDTO regenerateTokenRequestDTO
+    ) {
+        String givenRefreshToken = regenerateTokenRequestDTO.getRefreshToken();
+
+        TokenContainer tokens = memberService.regenerateTokensViaRefreshToken(givenRefreshToken);
+
+        return new RegenerateTokenResponseDTO(tokens);
+    }
 }

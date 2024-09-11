@@ -9,8 +9,8 @@ public class MemberLoginRequestDTO {
 
     private String password;
 
-    public MemberLoginRequestDTO(String username, String password) {
-        this.email = username;
+    public MemberLoginRequestDTO(String email, String password) {
+        this.email = email;
         this.password = password;
     }
 
