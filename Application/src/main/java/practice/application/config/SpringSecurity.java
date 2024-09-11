@@ -41,6 +41,7 @@ public class SpringSecurity {
         //세션 관리 상태 없음으로 구성, Spring Security가 세션 생성 or 사용 X
         http.sessionManagement(sessionManagement -> sessionManagement.sessionCreationPolicy(
                 SessionCreationPolicy.STATELESS));
+        //
 
         //FormLogin, BasicHttp 비활성화
         http.formLogin((form) -> form.disable());
