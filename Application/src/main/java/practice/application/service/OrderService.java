@@ -29,8 +29,6 @@ public class OrderService {
     private final OrderRepository orderRepository;
     private final OrderItemsService orderItemsService;
 
-    public List<OrderEntity> findEmail(String email){
-        List<OrderEntity> orderEntityList = orderRepository.findByEmail(email, OrderStatus.CANCELED).orElseThrow(() -> new NotFoundException("해당 이메일에 대한 주문은 없습니다"));
     public List<OrderResponseDTO> getOrders(MemberEntity member, OrderStatus orderStatus){
         List<OrderEntity> orderEntityList = orderRepository.findByMemberAndStatus(member, orderStatus)
                 .orElseThrow(() -> new NotFoundException("해당 유저에 대한 주문은 없습니다"));
@@ -74,17 +72,23 @@ public class OrderService {
         return new PatchOrderStatusDTO(orderEntity.getStatus());
     }
 
+    /**
+     * Member와 status가 RESERVED인 Order를 조회합니다.
+     * 있을 경우 해당 Order를 사용하여 추가로 상품을 주문할 수 있습니다.
+     * 없을 경우 새로운 Order를 생성합니다.
+     */
     public OrderEntity checkExistOrder(MemberEntity member,
                                        OrderCreateDTO orderCreateDTO,
                                        List<OrdersItemEntity> orderItems) {
-        Optional<OrderEntity> optionalOrder = orderRepository.findByMemberAndStatus(member, OrderStatus.RESERVED);
+        Optional<OrderEntity> optionalOrder = orderRepository.findByMemberAndReservedStatus(member);
 
         if(optionalOrder.isPresent()) {
-            OrderEntity orderEntity = optionalOrder.get();
+            OrderEntity orderEntity = optionalOrder.get(); // 찾은 Order 사용
             orderEntity.addOrderItems(orderItems);
 
             return orderEntity;
         } else {
+            // 새로운 Order 생성
             return new OrderEntity(member, orderCreateDTO.getEmail(), orderCreateDTO.getPostCode(), orderItems);
         }
     }
