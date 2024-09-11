@@ -38,9 +38,18 @@ public class OrderService {
         MemberEntity member = memberRepository.findByEmail(orderCreateDTO.getEmail())
                 .orElseThrow(() -> new NotFoundException("해당 회원을 찾을 수 없습니다"));
 
+        // 주문 엔티티 생성
         OrderEntity orderEntity = new OrderEntity(orderCreateDTO.getEmail(), orderCreateDTO.getPostCode(), orderItems);
 
-        // 회원 설정
+        // 등급별 할인 적용
+        int originalPrice = orderEntity.getSum();
+        int discountedPrice = (int) member.applyDiscount(originalPrice);
+
+        // 할인된 가격으로 주문 금액 업데이트
+        orderEntity.setSum(discountedPrice);
+
+
+        // 주문과 회원 매핑
         orderEntity.addMember(member);
 
         // 주문 저장

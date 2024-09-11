@@ -14,7 +14,6 @@ import java.util.List;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
 @Table(name = "orders")
-
 public class OrderEntity extends BaseEntity{
     @Id
     @Column(name = "order_id")
@@ -61,6 +60,10 @@ public class OrderEntity extends BaseEntity{
     public void addMember(MemberEntity member) { // 연관관계 매핑
         this.member = member;
         member.getOrderEntityList().add(this);
+    }
+
+    public void setSum(int sum) {
+        this.sum = sum;
     }
 
     public void orderCancel(){  //주문 취소 로직
