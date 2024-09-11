@@ -5,7 +5,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import practice.application.models.DTO.OrderCreateDTO;
-import practice.application.models.DTO.CommonResponseDTO;
 import practice.application.models.DTO.OrderResponseDTO;
 import practice.application.models.DTO.PatchOrderStatusDTO;
 import practice.application.models.MemberEntity;
@@ -19,6 +18,7 @@ import practice.application.models.exception.ImpossibleCancelException;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -31,13 +31,16 @@ public class OrderService {
 
     public List<OrderEntity> findEmail(String email){
         List<OrderEntity> orderEntityList = orderRepository.findByEmail(email, OrderStatus.CANCELED).orElseThrow(() -> new NotFoundException("해당 이메일에 대한 주문은 없습니다"));
+    public List<OrderResponseDTO> getOrders(MemberEntity member, OrderStatus orderStatus){
+        List<OrderEntity> orderEntityList = orderRepository.findByMemberAndStatus(member, orderStatus)
+                .orElseThrow(() -> new NotFoundException("해당 유저에 대한 주문은 없습니다"));
 
         if(orderEntityList.isEmpty()){
-            throw new NotFoundException("해당 이메일에 대한 주문은 없습니다");
+            throw new NotFoundException("해당 유저에 대한 주문은 없습니다");
         }
 
 
-        return orderEntityList;
+        return orderEntityList.stream().map(orderEntity -> new OrderResponseDTO(orderEntity)).collect(Collectors.toList());
     }
 
     @Transactional

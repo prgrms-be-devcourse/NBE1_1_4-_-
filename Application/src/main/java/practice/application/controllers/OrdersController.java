@@ -32,6 +32,11 @@ public class OrdersController {
         for(OrderEntity orderEntity : findOrderEntity) {
             orderResponseDTOS.add(new OrderResponseDTO(orderEntity));
         }
+    @GetMapping
+    public List<OrderResponseDTO> getOrders(@AuthenticationPrincipal CustomUserDetails customUserDetails,
+                                            @RequestParam OrderStatus orderStatus) {
+        return orderService.getOrders(customUserDetails.getMember(), orderStatus);
+    }
 
         return orderResponseDTOS;
 
