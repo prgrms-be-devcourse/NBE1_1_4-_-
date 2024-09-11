@@ -171,6 +171,10 @@ class MemberServiceTest {
     @Order(6)
     @Transactional
     public void regenerateTokenViaRefreshTokenTest() throws Exception {
+
+        // 주어진 토큰으로 매칭 안되면 NotFoundException throw
+        assertThrows(NotFoundException.class, () -> memberService.regenerateTokensViaRefreshToken("아주 이상한 토큰"));
+
         // 토큰 줘서 서비스가 뱉어낸 결과
         TokenContainer regeneratedTokens = memberService.regenerateTokensViaRefreshToken(refreshToken);
 
@@ -185,6 +189,5 @@ class MemberServiceTest {
             assertNotNull(regeneratedTokens.getRefreshToken());
             assertEquals(member.getRefreshToken(), regeneratedTokens.getRefreshToken());
         });
-
     }
 }
