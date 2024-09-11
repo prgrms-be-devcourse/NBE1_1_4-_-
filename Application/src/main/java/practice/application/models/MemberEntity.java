@@ -29,6 +29,8 @@ public class MemberEntity {
 
     private String phoneNumber;
 
+    private String refreshToken;
+
     @OneToMany(mappedBy = "member")
     private List<OrderEntity> orderEntityList = new ArrayList<>();
 
@@ -38,8 +40,16 @@ public class MemberEntity {
     @Embedded
     private Address address;
 
+
     private int totalAmount = 0; // 현재까지 총 결제 금액
 
+
+    // TODO [MemberEntity] Refresh Token 기능 구현 후 삭제해야 할 수도 있음.
+    /**
+     * @deprecated Refresh Token 기능 구현 후 삭제하는게 좋을 수도 있음.
+     * @see #MemberEntity(String, String, String, String, String, UserType, Address)  MemberEntity
+     */
+    @Deprecated
     public MemberEntity(String email, String name, String password, String phoneNumber, UserType userType, Address address) {
         this.email = email;
         this.name = name;
@@ -47,6 +57,22 @@ public class MemberEntity {
         this.phoneNumber = phoneNumber;
         this.userType = userType;
         this.address = address;
+    }
+
+    // Refresh Token 기능용 임시 생성자
+
+    /**
+     * Refresh Token 포함해서 엔티티 생성하는 생성자
+     */
+    public MemberEntity(String email, String name, String password, String phoneNumber, String refreshToken, UserType userType, Address address) {
+        this.email = email;
+        this.name = name;
+        this.password = password;
+        this.phoneNumber = phoneNumber;
+        this.refreshToken = refreshToken;
+        this.userType = userType;
+        this.address = address;
+
     }
 
     public MembershipGrade getGrade() {
@@ -77,12 +103,23 @@ public class MemberEntity {
         this.password = password;
     }
 
+
     public void updateTotalAmount(int amount) {
         this.totalAmount += amount;
     }
 
     public void updateTotalAmountOnCancellation(int amount) {
         this.totalAmount -= amount;
+    }
+
+
+    /**
+     * Refresh Token 주입용 Setter
+     * @param refreshToken 리프래쉬 토큰
+     */
+    @SuppressWarnings("LombokSetterMayBeUsed")
+    public void setRefreshToken(String refreshToken) {
+        this.refreshToken = refreshToken;
     }
 
 }

@@ -16,6 +16,7 @@ import java.util.List;
 @Getter
 @Table(name = "orders")
 public class OrderEntity extends BaseEntity{
+
     @Id
     @Column(name = "order_id")
     @GeneratedValue(strategy = GenerationType.UUID)
@@ -28,7 +29,6 @@ public class OrderEntity extends BaseEntity{
     @Setter
     private int sum = 0;
 
-
     @Enumerated(EnumType.STRING)
     private OrderStatus status;
 
@@ -39,23 +39,19 @@ public class OrderEntity extends BaseEntity{
     @JoinColumn(name = "member_id")
     private MemberEntity member;
 
-    public OrderEntity(String email, String postCode, List<OrdersItemEntity> ordersItemsList) {
+    public OrderEntity(MemberEntity member, String email, String postCode, List<OrdersItemEntity> ordersItemsList) {
         this.email = email;
         this.postCode = postCode;
-//        this.status = OrderStatus.ORDER;
         this.status = OrderStatus.RESERVED;
-        for(OrdersItemEntity ordersItem : ordersItemsList){  // 주문 시  총 값
-            addOrderItem(ordersItem);
-            this.sum += ordersItem.getPrice();
-        }
+        addOrderItems(ordersItemsList);
+        addMember(member);
     }
 
-    public void addOrderItem(OrdersItemEntity ordersItem) { //양방향
-        ordersItemsList.add(ordersItem);
-        ordersItem.addOrderEntity(this);
-        // 회원의 총 금액 업데이트
-        if (this.member != null) {
-            this.member.updateTotalAmount(ordersItem.getPrice());
+    public void addOrderItems(List<OrdersItemEntity> ordersItems) { //양방향
+        for(OrdersItemEntity ordersItem : ordersItems){  // 주문 시  총 값
+            ordersItemsList.add(ordersItem);
+            ordersItem.addOrderEntity(this);
+            this.sum += ordersItem.getPrice();
         }
     }
 
@@ -64,10 +60,14 @@ public class OrderEntity extends BaseEntity{
         member.getOrderEntityList().add(this);
     }
 
+    public void changeStatusPayment() {
+        this.status = OrderStatus.PAYMENT;
+    }
+
+
     public void orderCancel(){  //주문 취소 로직
         this.status = OrderStatus.CANCELED;
         int totalCancelAmount = 0;
-
         for(OrdersItemEntity ordersItem : ordersItemsList){
             int quantity = ordersItem.getQuantity();
             int price = ordersItem.getPrice();
@@ -76,13 +76,14 @@ public class OrderEntity extends BaseEntity{
             ordersItem.getProduct().addQuantity(quantity);
         }
 
+
         if (this.member != null) {
             this.member.updateTotalAmountOnCancellation(totalCancelAmount);
         }
     }
 
-    public void updateOrderStatus(OrderStatus newStatus) {
-        this.status = newStatus;
+    public void changeStatusDelivered() {
+        this.status = OrderStatus.DELIVERED;
     }
-
+}
 }
