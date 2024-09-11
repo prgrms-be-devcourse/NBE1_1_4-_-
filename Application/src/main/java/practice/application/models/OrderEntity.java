@@ -5,6 +5,7 @@ import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 import practice.application.models.enumType.OrderStatus;
 
 import java.util.ArrayList;
@@ -24,6 +25,7 @@ public class OrderEntity extends BaseEntity{
 
     private String postCode;
 
+    @Setter
     private int sum = 0;
 
 
@@ -60,10 +62,6 @@ public class OrderEntity extends BaseEntity{
     public void addMember(MemberEntity member) { // 연관관계 매핑
         this.member = member;
         member.getOrderEntityList().add(this);
-    }
-
-    public void setSum(int sum) {
-        this.sum = sum;
     }
 
     public void orderCancel(){  //주문 취소 로직
