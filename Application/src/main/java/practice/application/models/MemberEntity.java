@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import practice.application.models.enumType.MembershipGrade;
 import practice.application.models.enumType.UserType;
 
 import java.util.ArrayList;
@@ -46,6 +47,30 @@ public class MemberEntity {
         this.phoneNumber = phoneNumber;
         this.userType = userType;
         this.address = address;
+    }
+
+    public MembershipGrade getGrade() {
+        if (this.totalAmount < 1000000) {
+            return MembershipGrade.VIP;
+        } else if (this.totalAmount < 5000000) {
+            return MembershipGrade.VVIP;
+        } else {
+            return MembershipGrade.GOLD;
+        }
+    }
+
+    public double applyDiscount(int originalPrice) {
+        MembershipGrade grade = getGrade();
+        switch (grade) {
+            case GOLD:
+                return originalPrice;
+            case VIP:
+                return originalPrice * 0.90; // 10% 할인
+            case VVIP:
+                return originalPrice * 0.80; // 20% 할인
+            default:
+                return originalPrice;
+        }
     }
 
     public void encodePassword(String password){
