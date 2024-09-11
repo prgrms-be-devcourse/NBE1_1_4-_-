@@ -8,11 +8,13 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 import practice.application.service.CustomUserDetailService;
 
 import java.io.IOException;
 
+@Component
 @RequiredArgsConstructor
 public class JwtFilter extends OncePerRequestFilter {
 
@@ -31,7 +33,7 @@ public class JwtFilter extends OncePerRequestFilter {
 
             if(jwtUtil.isExpired(token)){
 
-                Long userId = jwtUtil.getUserId(token); //payload에 있는 데이터를 꺼낸다.
+                Long userId = jwtUtil.getUserIdWithAccessToken(token); //payload에 있는 데이터를 꺼낸다.
 
                 System.out.println(userId);
 

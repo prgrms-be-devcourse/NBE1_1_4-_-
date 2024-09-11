@@ -22,6 +22,7 @@ import practice.application.service.CustomUserDetailService;
 public class SpringSecurity {
 
     private final JwtUtil jwtUtil;
+    private final JwtFilter jwtFilter;
     private final CustomUserDetailService customUserDetailService;
     private final CustomAccessDeniedHandler accessDeniedHandler; // 인증은 되었지만 권한이 없을경우
     private final CustomAuthenticationEntryPoint authenticationEntryPoint;  // 인증 되지 않은 사용자에 대한 excepton 처리
@@ -50,7 +51,7 @@ public class SpringSecurity {
         http.authorizeRequests((authorize) -> authorize.requestMatchers("/members/**").permitAll()
                 .anyRequest().authenticated());
 
-        http.addFilterBefore(new JwtFilter(customUserDetailService, jwtUtil), UsernamePasswordAuthenticationFilter.class);
+        http.addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
 
         http.exceptionHandling((exceptionHandling) -> exceptionHandling.accessDeniedHandler(accessDeniedHandler)
                 .authenticationEntryPoint(authenticationEntryPoint));
