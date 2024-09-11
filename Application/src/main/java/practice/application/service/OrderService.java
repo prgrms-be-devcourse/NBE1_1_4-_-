@@ -79,17 +79,17 @@ public class OrderService {
      */
     public OrderEntity checkExistOrder(MemberEntity member,
                                        OrderCreateDTO orderCreateDTO,
-                                       List<OrdersItemEntity> orderItems) {
+                                       List<OrdersItemEntity> newOrderItems) {
         Optional<OrderEntity> optionalOrder = orderRepository.findByMemberAndReservedStatus(member);
 
         if(optionalOrder.isPresent()) {
             OrderEntity orderEntity = optionalOrder.get(); // 찾은 Order 사용
-            orderEntity.addOrderItems(orderItems);
+            orderEntity.addOrderItems(newOrderItems);
 
             return orderEntity;
         } else {
             // 새로운 Order 생성
-            return new OrderEntity(member, orderCreateDTO.getEmail(), orderCreateDTO.getPostCode(), orderItems);
+            return new OrderEntity(member, orderCreateDTO.getEmail(), orderCreateDTO.getPostCode(), newOrderItems);
         }
     }
 }
