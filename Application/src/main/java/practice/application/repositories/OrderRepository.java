@@ -3,6 +3,7 @@ package practice.application.repositories;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
+import practice.application.models.MemberEntity;
 import practice.application.models.OrderEntity;
 import practice.application.models.enumType.OrderStatus;
 

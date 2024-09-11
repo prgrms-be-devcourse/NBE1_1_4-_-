@@ -7,11 +7,9 @@ import org.springframework.web.bind.annotation.*;
 import practice.application.models.DTO.OrderCreateDTO;
 import practice.application.models.DTO.OrderCreateResponseDTO;
 import practice.application.models.DTO.OrderResponseDTO;
-import practice.application.models.DTO.PatchOrderStatus;
 import practice.application.models.DTO.CommonResponseDTO;
 import practice.application.models.Jwt.CustomUserDetails;
 import practice.application.models.OrderEntity;
-import practice.application.models.exception.NotFoundException;
 import practice.application.repositories.OrderRepository;
 import practice.application.service.OrderService;
 
@@ -42,10 +40,6 @@ public class OrdersController {
 
     }
 
-
-    @PostMapping("")  //주문 생성 api
-    public OrderCreateResponseDTO orderCreate(@RequestBody OrderCreateDTO orderCreateDTO){
-        OrderEntity save = orderService.save(orderCreateDTO);
     @PostMapping  //주문 생성 api
     public OrderCreateResponseDTO orderCreate(@AuthenticationPrincipal CustomUserDetails customUserDetails,
                                               @RequestBody OrderCreateDTO orderCreateDTO){
@@ -61,6 +55,9 @@ public class OrdersController {
         OrderEntity orderEntity = orderService.cancelOrder(orderId);
 
         return new PatchOrderStatus(orderEntity.getStatus());   
+    @PatchMapping("/payment/{orderId}")
+    public CommonResponseDTO payment(@PathVariable("orderId") String orderId) {
+        return orderService.paymentOrder(orderId);
     }
 
 

@@ -49,7 +49,6 @@ public class OrderService {
     }
 
     @Transactional
-    public OrderEntity cancelOrder(String orderId) {
     public OrderEntity save(MemberEntity member, OrderCreateDTO orderCreateDTO) {
         List<OrdersItemEntity> orderItems = orderItemsService.createOrderItems(orderCreateDTO.getOrderItemsDTOS());
 
@@ -58,6 +57,14 @@ public class OrderService {
         return orderRepository.save(orderEntity);
     }
 
+    @Transactional
+    public CommonResponseDTO paymentOrder(String orderId) {
+        OrderEntity orderEntity = orderRepository.findById(orderId).orElseThrow(() -> new NotFoundException("해당 주문을 찾을 수 없습니다"));
+
+        orderEntity.changeStatusPayment();
+
+        return new CommonResponseDTO("payment success");
+    }
         OrderEntity orderEntity = orderRepository.findFetchById(orderId).orElseThrow(() -> new NotFoundException("해당 주문을 찾을 수 없습니다"));
 
         orderEntity.orderCancel();
@@ -70,17 +77,6 @@ public class OrderService {
         if(optionalOrder.isPresent()) {
             OrderEntity orderEntity = optionalOrder.get();
             orderEntity.addOrderItems(orderItems);
-
-        return orderEntity;
-
-    }
-
-
-
-
-
-
-
 
             return orderEntity;
         } else {
