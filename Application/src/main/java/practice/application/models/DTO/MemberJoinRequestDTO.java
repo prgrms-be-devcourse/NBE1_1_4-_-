@@ -42,4 +42,17 @@ public class MemberJoinRequestDTO {
     public MemberEntity toEntity(){
       return new MemberEntity(email, name, password, phoneNumber, userType, new Address(city, street, zipcode));
     }
+
+    public MemberJoinResponseDTO toResponseDTO() {
+        MemberJoinResponseDTO responseDTO = new MemberJoinResponseDTO();
+        responseDTO.setEmail(email);
+        responseDTO.setName(name);
+        responseDTO.setPhoneNumber(phoneNumber);
+        responseDTO.setStreet(street);
+        responseDTO.setCity(city);
+        responseDTO.setZipcode(zipcode);
+        responseDTO.setUserType(userType);
+
+        return responseDTO;
+    }
 }
