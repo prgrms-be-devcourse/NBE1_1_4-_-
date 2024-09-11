@@ -2,6 +2,7 @@ package practice.application.service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import practice.application.models.DTO.OrderCreateDTO;
@@ -57,7 +58,11 @@ public class OrderService {
 
     }
 
+    @Scheduled(cron="0 0 14 * * ?")
+    public void processShipments(){
+    //주문 상태가 PAYMENT_CONFIRMED인 Order들만 List로 받아오자.
 
+    }
 
 
 
