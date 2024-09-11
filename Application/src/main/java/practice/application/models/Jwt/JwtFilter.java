@@ -12,6 +12,7 @@ import org.springframework.web.filter.OncePerRequestFilter;
 import practice.application.service.CustomUserDetailService;
 
 import java.io.IOException;
+
 @RequiredArgsConstructor
 public class JwtFilter extends OncePerRequestFilter {
 
@@ -32,6 +33,9 @@ public class JwtFilter extends OncePerRequestFilter {
 
                 Long userId = jwtUtil.getUserId(token); //payload에 있는 데이터를 꺼낸다.
 
+                System.out.println(userId);
+
+
                 UserDetails userDetails = customUserDetailService.loadUserByUsername(userId.toString());
 
                 if(userDetails != null){
@@ -48,8 +52,9 @@ public class JwtFilter extends OncePerRequestFilter {
 
             }
 
-            filterChain.doFilter(request, response);
+
         }
+        filterChain.doFilter(request, response);
 
     }
 }

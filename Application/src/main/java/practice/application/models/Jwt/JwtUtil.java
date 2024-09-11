@@ -49,12 +49,14 @@ public class JwtUtil {
 
     private String createToken(MemberEntity member, long exp) {
 
+        System.out.println(member.getId().getClass().getName());
+
         return Jwts.builder()
-                .claim("memberId", member.getId())
+                .claim("memberId", member.getId())  // Ensure member.getId() returns Long
                 .claim("email", member.getEmail())
                 .claim("role", member.getUserType())
                 .issuedAt(new Date(System.currentTimeMillis()))
-                .expiration(new Date(System.currentTimeMillis() + exp))
+                .setExpiration(new Date(System.currentTimeMillis() + exp))
                 .signWith(secretKey)
                 .compact();
 
@@ -66,7 +68,9 @@ public class JwtUtil {
      * @return User ID
      */
     public Long getUserId(String token) {
-        return parseClaims(token).get("memberId", Long.class);
+
+        Number memberId = parseClaims(token).get("memberId", Number.class);
+        return memberId.longValue();
     }
 
     public Boolean isExpired(String token) {

@@ -9,7 +9,10 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import practice.application.models.Jwt.JwtFilter;
 import practice.application.models.Jwt.JwtUtil;
+import practice.application.service.CustomUserDetailService;
 
 @Configuration
 @EnableWebSecurity
@@ -17,8 +20,7 @@ import practice.application.models.Jwt.JwtUtil;
 public class SpringSecurity {
 
     private final JwtUtil jwtUtil;
-
-
+    private final CustomUserDetailService customUserDetailService;
 
     @Bean
     public BCryptPasswordEncoder bCryptPasswordEncoder() {
@@ -32,6 +34,7 @@ public class SpringSecurity {
         http.csrf((csrf) -> csrf.disable());
         http.cors(Customizer.withDefaults());
 
+        //세션 관리 상태 없음으로 구성, Spring Security가 세션 생성 or 사용 X
         http.sessionManagement(sessionManagement -> sessionManagement.sessionCreationPolicy(
                 SessionCreationPolicy.STATELESS));
 
@@ -40,7 +43,10 @@ public class SpringSecurity {
         http.httpBasic((auth) -> auth.disable());
 
         http.authorizeRequests((authorize) -> authorize.requestMatchers("/members/**").permitAll()
-                .anyRequest().permitAll());
+                .anyRequest().authenticated());
+
+        http.addFilterBefore(new JwtFilter(customUserDetailService, jwtUtil), UsernamePasswordAuthenticationFilter.class);
+
 
         return http.build();
 

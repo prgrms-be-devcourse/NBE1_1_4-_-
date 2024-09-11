@@ -14,7 +14,6 @@ import practice.application.repositories.MemberRepository;
 @Service
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
-
 public class CustomUserDetailService implements UserDetailsService {
     private final MemberRepository memberRepository;
 
