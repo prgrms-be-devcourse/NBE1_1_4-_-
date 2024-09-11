@@ -6,6 +6,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import practice.application.models.DTO.OrderCreateDTO;
 import practice.application.models.DTO.CommonResponseDTO;
+import practice.application.models.DTO.OrderResponseDTO;
+import practice.application.models.DTO.PatchOrderStatusDTO;
 import practice.application.models.MemberEntity;
 import practice.application.models.OrderEntity;
 import practice.application.models.OrdersItemEntity;
@@ -46,16 +48,16 @@ public class OrderService {
     }
 
     @Transactional
-    public CommonResponseDTO paymentOrder(String orderId) {
+    public PatchOrderStatusDTO paymentOrder(String orderId) {
         OrderEntity orderEntity = orderRepository.findById(orderId).orElseThrow(() -> new NotFoundException("해당 주문을 찾을 수 없습니다"));
 
         orderEntity.changeStatusPayment();
 
-        return new CommonResponseDTO("payment success");
+        return new PatchOrderStatusDTO(orderEntity.getStatus());
     }
 
     @Transactional
-    public CommonResponseDTO cancelOrder(String orderId) {
+    public PatchOrderStatusDTO cancelOrder(String orderId) {
         OrderEntity orderEntity = orderRepository.findFetchById(orderId).orElseThrow(() -> new NotFoundException("해당 주문을 찾을 수 없습니다"));
 
         if(orderEntity.getStatus().equals(OrderStatus.DELIVERED)) {
@@ -64,7 +66,7 @@ public class OrderService {
 
         orderEntity.orderCancel();
 
-        return new CommonResponseDTO("cancel success");
+        return new PatchOrderStatusDTO(orderEntity.getStatus());
     }
 
     public OrderEntity checkExistOrder(MemberEntity member,

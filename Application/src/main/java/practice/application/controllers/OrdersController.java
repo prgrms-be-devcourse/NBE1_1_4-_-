@@ -4,16 +4,13 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
-import practice.application.models.DTO.OrderCreateDTO;
-import practice.application.models.DTO.OrderCreateResponseDTO;
-import practice.application.models.DTO.OrderResponseDTO;
-import practice.application.models.DTO.CommonResponseDTO;
+import practice.application.models.DTO.*;
 import practice.application.models.Jwt.CustomUserDetails;
 import practice.application.models.OrderEntity;
+import practice.application.models.enumType.OrderStatus;
 import practice.application.repositories.OrderRepository;
 import practice.application.service.OrderService;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @RestController
@@ -49,12 +46,12 @@ public class OrdersController {
     }
 
     @PatchMapping("/payment/{orderId}")
-    public CommonResponseDTO payment(@PathVariable("orderId") String orderId) {
+    public PatchOrderStatusDTO payment(@PathVariable("orderId") String orderId) {
         return orderService.paymentOrder(orderId);
     }
 
     @PatchMapping("/cancel/{orderId}")
-    public CommonResponseDTO patchStatus(@PathVariable("orderId") String orderId){
+    public PatchOrderStatusDTO patchStatus(@PathVariable("orderId") String orderId){
         return orderService.cancelOrder(orderId);
     }
 }
