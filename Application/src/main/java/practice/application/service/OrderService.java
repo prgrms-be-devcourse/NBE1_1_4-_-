@@ -26,23 +26,11 @@ public class OrderService {
     private final OrderRepository orderRepository;
     private final OrderItemsService orderItemsService;
 
-
-    @Transactional
-    public OrderEntity save(OrderCreateDTO orderCreateDTO) {
-
-        List<OrdersItemEntity> orderItems = orderItemsService.createOrderItems(orderCreateDTO.getOrderItemsDTOS());
-
-        OrderEntity orderEntity = new OrderEntity(orderCreateDTO.getEmail(), orderCreateDTO.getPostCode(), orderItems);
-
-        return orderRepository.save(orderEntity);
-    }
-
-
     public List<OrderEntity> findEmail(String email){
-        List<OrderEntity> orderEntityList = orderRepository.findByEmail(email, OrderStatus.CANCEL).orElseThrow(() -> new NotFoundException("해당 이메일에 대한 주문은 없습니다"));
+        List<OrderEntity> orderEntityList = orderRepository.findByEmail(email, OrderStatus.CANCELED).orElseThrow(() -> new NotFoundException("해당 이메일에 대한 주문은 없습니다"));
 
         if(orderEntityList.isEmpty()){
-          throw new NotFoundException("해당 이메일에 대한 주문은 없습니다");
+            throw new NotFoundException("해당 이메일에 대한 주문은 없습니다");
         }
 
         return orderEntityList;
@@ -65,9 +53,19 @@ public class OrderService {
 
         return new CommonResponseDTO("payment success");
     }
+
+    @Transactional
+    public CommonResponseDTO cancelOrder(String orderId) {
         OrderEntity orderEntity = orderRepository.findFetchById(orderId).orElseThrow(() -> new NotFoundException("해당 주문을 찾을 수 없습니다"));
 
+        if(orderEntity.getStatus().equals(OrderStatus.DELIVERED)) {
+            throw new ImpossibleCancelException();
+        }
+
         orderEntity.orderCancel();
+
+        return new CommonResponseDTO("cancel success");
+    }
 
     public OrderEntity checkExistOrder(MemberEntity member,
                                        OrderCreateDTO orderCreateDTO,

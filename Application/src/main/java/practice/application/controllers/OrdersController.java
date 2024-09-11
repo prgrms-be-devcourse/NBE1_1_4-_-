@@ -48,26 +48,13 @@ public class OrdersController {
         return new OrderCreateResponseDTO(save);
     }
 
-
-    @PatchMapping("/{orderId}")
-    public PatchOrderStatus patchStatus(@PathVariable("orderId") String orderId){
-
-        OrderEntity orderEntity = orderService.cancelOrder(orderId);
-
-        return new PatchOrderStatus(orderEntity.getStatus());   
     @PatchMapping("/payment/{orderId}")
     public CommonResponseDTO payment(@PathVariable("orderId") String orderId) {
         return orderService.paymentOrder(orderId);
     }
 
-
-
-
-
-
-
-
-
-
-
+    @PatchMapping("/cancel/{orderId}")
+    public CommonResponseDTO patchStatus(@PathVariable("orderId") String orderId){
+        return orderService.cancelOrder(orderId);
+    }
 }

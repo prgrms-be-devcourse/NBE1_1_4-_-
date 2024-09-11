@@ -58,11 +58,12 @@ public class OrderEntity extends BaseEntity{
         member.getOrderEntityList().add(this);
     }
 
-    public void orderCancel(){  //주문 취소 로직
-        this.status = OrderStatus.CANCEL;
     public void changeStatusPayment() {
         this.status = OrderStatus.PAYMENT;
     }
+
+    public void orderCancel() {  //주문 취소 로직
+        this.status = OrderStatus.CANCELED;
 
         for(OrdersItemEntity ordersItem : ordersItemsList){
             int quantity = ordersItem.getQuantity();
