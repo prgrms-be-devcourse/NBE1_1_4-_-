@@ -6,11 +6,13 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import practice.application.models.DTO.OrderCreateDTO;
+import practice.application.models.MemberEntity;
 import practice.application.models.OrderEntity;
 import practice.application.models.OrdersItemEntity;
 import practice.application.models.enumType.OrderStatus;
 import practice.application.models.exception.NotFoundException;
 import practice.application.models.exception.OrderAlreadyCancelledException;
+import practice.application.repositories.MemberRepository;
 import practice.application.repositories.OrderRepository;
 import practice.application.repositories.ProductRepository;
 
@@ -24,6 +26,7 @@ public class OrderService {
 
     private final OrderRepository orderRepository;
     private final OrderItemsService orderItemsService;
+    private final MemberRepository memberRepository;
 
 
     @Transactional
@@ -31,9 +34,21 @@ public class OrderService {
 
         List<OrdersItemEntity> orderItems = orderItemsService.createOrderItems(orderCreateDTO.getOrderItemsDTOS());
 
+        // 회원 찾기
+        MemberEntity member = memberRepository.findByEmail(orderCreateDTO.getEmail())
+                .orElseThrow(() -> new NotFoundException("해당 회원을 찾을 수 없습니다"));
+
         OrderEntity orderEntity = new OrderEntity(orderCreateDTO.getEmail(), orderCreateDTO.getPostCode(), orderItems);
 
-        return orderRepository.save(orderEntity);
+        // 회원 설정
+        orderEntity.addMember(member);
+
+        // 주문 저장
+        OrderEntity savedOrder = orderRepository.save(orderEntity);
+
+
+
+        return savedOrder;
     }
 
 
