@@ -79,8 +79,6 @@ public class OrderService {
 
         MemberEntity member = orderEntity.getMember();
 
-        member.updateTotalAmountOnCancellation(orderEntity.getSum()); //주문 취소로 인한 총 결제 금액 감소
-
         return orderEntity;
 
     }
