@@ -18,11 +18,30 @@ public class MemberController {
 
     private final MemberService memberService;
 
+    /**
+     * 회원가입 시켜주는 endpoint
+     *
+     * @param memberJoinRequestDTO 회원가입 요청 {@code DTO}
+     * @return 회원에게 assign 된 {@code ID} {@code (Long)}
+     * @deprecated endpoint {@code /members/register} 인게 더 낫지 않나
+     */
     @PostMapping()
     public Long joinMember(@RequestBody MemberJoinRequestDTO memberJoinRequestDTO) {
         Long save = memberService.save(memberJoinRequestDTO);
 
         return save;
+    }
+
+    /**
+     * 회원가입 시켜주는 endpoint
+     *
+     * @param joinRequestDTO 회원가입 요청 {@code DTO}
+     * @return {@link MemberJoinResponseDTO} 응답 {@code DTO}
+     */
+    @PostMapping("/register")
+    public MemberJoinResponseDTO registerMember(@RequestBody MemberJoinRequestDTO joinRequestDTO) {
+        memberService.save(joinRequestDTO);
+        return joinRequestDTO.toResponseDTO();
     }
 
 
