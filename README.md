@@ -63,6 +63,11 @@ Programmers DevCourse BE 1기 3팀의 1 차 프로젝트 repository 입니다.
 > 기술 스텍
 >
 > `Java17`, `Gradle`, `Spring Boot 3.3.3`, `Spring Data JPA 3.3.3`, `Json Web Token`, `Spring Security`, `Junit 5.10.3` `MySQL`
+>
+> ### ERD
+>![image](https://github.com/user-attachments/assets/a880e935-49a7-4983-9e62-607e2585eaf8)
+
+> 
 
 ---
 
