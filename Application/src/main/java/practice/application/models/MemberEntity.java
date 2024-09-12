@@ -40,9 +40,7 @@ public class MemberEntity {
     @Embedded
     private Address address;
 
-
     private int totalAmount = 0; // 현재까지 총 결제 금액
-
 
     // TODO [MemberEntity] Refresh Token 기능 구현 후 삭제해야 할 수도 있음.
     /**
@@ -72,7 +70,6 @@ public class MemberEntity {
         this.refreshToken = refreshToken;
         this.userType = userType;
         this.address = address;
-
     }
 
     public MembershipGrade getGrade() {
@@ -103,7 +100,6 @@ public class MemberEntity {
         this.password = password;
     }
 
-
     public void updateTotalAmount(int amount) {
         this.totalAmount += amount;
     }
@@ -121,5 +117,4 @@ public class MemberEntity {
     public void setRefreshToken(String refreshToken) {
         this.refreshToken = refreshToken;
     }
-
 }

@@ -4,14 +4,14 @@ import lombok.Data;
 import practice.application.models.enumType.OrderStatus;
 
 @Data
-public class PatchOrderStatus {
+public class PatchOrderStatusDTO {
 
     private OrderStatus status;
 
-    public PatchOrderStatus(OrderStatus status) {
+    public PatchOrderStatusDTO(OrderStatus status) {
         this.status = status;
     }
 
-    public PatchOrderStatus() {
+    public PatchOrderStatusDTO() {
     }
 }

@@ -76,7 +76,6 @@ public class OrderEntity extends BaseEntity{
             ordersItem.getProduct().addQuantity(quantity);
         }
 
-
         if (this.member != null) {
             this.member.updateTotalAmountOnCancellation(totalCancelAmount);
         }
