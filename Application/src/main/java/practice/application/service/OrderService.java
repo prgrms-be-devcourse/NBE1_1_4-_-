@@ -49,9 +49,6 @@ public class OrderService {
         // 해당 주문에 대한 할인 적용 메서드 호출(결제하기 전까지는 멤버의 총결제금액은 업데이트X)
         applyMemberDiscount(orderEntity, member);
 
-        // 주문과 회원 매핑
-        orderEntity.addMember(member);
-
         // 주문 저장
         return orderRepository.save(orderEntity);
     }
