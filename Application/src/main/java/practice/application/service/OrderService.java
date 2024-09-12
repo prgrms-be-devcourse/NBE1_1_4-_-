@@ -15,9 +15,7 @@ import practice.application.models.enumType.OrderStatus;
 import practice.application.models.exception.ImpossibleCancelException;
 import practice.application.models.exception.NotFoundException;
 import practice.application.repositories.MemberRepository;
-
 import practice.application.repositories.OrderRepository;
-import practice.application.models.exception.ImpossibleCancelException;
 
 import java.util.List;
 import java.util.Optional;
@@ -70,13 +68,16 @@ public class OrderService {
 
     @Transactional
     public PatchOrderStatusDTO paymentOrder(String orderId) {
-        OrderEntity orderEntity = orderRepository.findById(orderId).orElseThrow(() -> new NotFoundException("해당 주문을 찾을 수 없습니다"));
+        OrderEntity orderEntity = orderRepository
+                .findById(orderId)
+                .orElseThrow(() -> new NotFoundException("해당 주문을 찾을 수 없습니다"));
 
         orderEntity.changeStatusPayment();
-        MemberEntity member=orderEntity.getMember();
+        MemberEntity member = orderEntity.getMember();
         //결제가 되고 나면 회원의 총 결제 금액을 업데이트
         member.updateTotalAmount(orderEntity.getSum());
         return new PatchOrderStatusDTO(orderEntity.getStatus());
+    }
 
     @Transactional
     public PatchOrderStatusDTO cancelOrder(String orderId) {
