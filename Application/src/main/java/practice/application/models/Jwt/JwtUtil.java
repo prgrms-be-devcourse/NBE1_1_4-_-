@@ -185,6 +185,7 @@ public class JwtUtil {
 
     // TODO 사용되는 곳 없는데 그냥 isExpired(String token, SecretKey key) 로 시그니처 바꿔도 되는지 확인
     /**
+     * 엑세스 토큰 만료되었는지 확인하는 메서드
      * @deprecated 사용되는 곳 없는데 그냥 isExpired(String token, SecretKey key) 로 사용하는게 좋을 수도 있음
      * @see #isExpired(String, SecretKey)
      */

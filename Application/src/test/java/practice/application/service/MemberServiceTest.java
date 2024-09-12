@@ -39,6 +39,7 @@ class MemberServiceTest {
 
     private final String testingEmail = "k12002@nate.com";
     private final String testingPassword = "1234";
+    private String refreshToken = null;
 
     @BeforeEach
     void setUp() {  // 각 테스트마다 필요한 이메일 넣는 메서드, 이미 넣어져 있으면 넘어감
@@ -51,6 +52,11 @@ class MemberServiceTest {
         catch (DuplicateEmailException e) {
             // User already saved in DB
         }
+
+        // refresh 토큰 테스트 위해 DB 기록되는 토큰 가져와놓기
+        MemberLoginRequestDTO memberLoginRequestDTO = new MemberLoginRequestDTO(testingEmail, testingPassword);
+        TokenContainer tokens = memberService.loginWithTokenContainer(memberLoginRequestDTO);
+        refreshToken = tokens.getRefreshToken();
     }
 
     @Test
@@ -158,5 +164,30 @@ class MemberServiceTest {
 
         // 없어졌는지 확인
         assertNull(member.getRefreshToken());
+    }
+
+    @Test
+    @DisplayName("Refresh 토큰 주어지면 access, refresh 잘 생성하고 DB 에 잘 update 되는지")
+    @Order(6)
+    @Transactional
+    public void regenerateTokenViaRefreshTokenTest() throws Exception {
+
+        // 주어진 토큰으로 매칭 안되면 NotFoundException throw
+        assertThrows(NotFoundException.class, () -> memberService.regenerateTokensViaRefreshToken("아주 이상한 토큰"));
+
+        // 토큰 줘서 서비스가 뱉어낸 결과
+        TokenContainer regeneratedTokens = memberService.regenerateTokensViaRefreshToken(refreshToken);
+
+        // 토큰 제대로 저장됐는지 확인하기 위해 멤버 꺼내기
+        MemberEntity member = memberRepository
+                .findByEmail(testingEmail)
+                .orElseThrow(NotFoundException::new);
+
+        // 서비스가 뱉어낸 결과 null 아니고 refresh 토큰 제대로 다시 저장 됐는지 확인
+        assertAll(() -> {
+            assertNotNull(regeneratedTokens.getAccessToken());
+            assertNotNull(regeneratedTokens.getRefreshToken());
+            assertEquals(member.getRefreshToken(), regeneratedTokens.getRefreshToken());
+        });
     }
 }

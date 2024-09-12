@@ -23,7 +23,7 @@ import practice.application.service.CustomUserDetailService;
 public class SpringSecurity {
 
     private final JwtUtil jwtUtil;
-    private final JwtFilter jwtFilter;
+    // private final JwtFilter jwtFilter;
     private final CustomUserDetailService customUserDetailService;
     private final CustomAccessDeniedHandler accessDeniedHandler; // 인증은 되었지만 권한이 없을경우
     private final CustomAuthenticationEntryPoint authenticationEntryPoint;  // 인증 되지 않은 사용자에 대한 excepton 처리
@@ -36,36 +36,42 @@ public class SpringSecurity {
 
 
     @Bean
-    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception{
+    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http.csrf((csrf) -> csrf.disable());
         http.cors(Customizer.withDefaults());
 
         //세션 관리 상태 없음으로 구성, Spring Security가 세션 생성 or 사용 X
-        http.sessionManagement(sessionManagement -> sessionManagement.sessionCreationPolicy(
-                SessionCreationPolicy.STATELESS));
+        http.sessionManagement(
+                sessionManagement -> sessionManagement.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
         //
 
         //FormLogin, BasicHttp 비활성화
         http.formLogin(AbstractHttpConfigurer::disable);
         http.httpBasic(AbstractHttpConfigurer::disable);
 
-        http.authorizeRequests((authorize) -> authorize.requestMatchers("/members/**").permitAll()
-                                                       .requestMatchers("/products/**")
-                                                       .hasRole("ADMIN")
-                                                       .anyRequest()
-                                                       .authenticated());
+        http.authorizeRequests((authorize) -> authorize
+                .requestMatchers("/members/**")
+                .permitAll()
+                .requestMatchers("/products/**")
+                .hasRole("ADMIN")
+                .requestMatchers("/error")
+                .permitAll()
+                .anyRequest()
+                .authenticated());
 
-        http.addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
+        //        http.addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
 
-        http.exceptionHandling((exceptionHandling) -> exceptionHandling.accessDeniedHandler(accessDeniedHandler)
+        http.addFilterBefore(
+                new JwtFilter(customUserDetailService, jwtUtil), UsernamePasswordAuthenticationFilter.class);
+
+        http.exceptionHandling((exceptionHandling) -> exceptionHandling
+                .accessDeniedHandler(accessDeniedHandler)
                 .authenticationEntryPoint(authenticationEntryPoint));
 
 
         return http.build();
 
     }
-
-
 
 
 }

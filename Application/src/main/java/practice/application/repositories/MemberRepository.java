@@ -15,4 +15,7 @@ public interface MemberRepository extends JpaRepository<MemberEntity, Long> {
 
     @Query("select distinct m from MemberEntity m left join fetch m.orderEntityList oe where m.id = :memberId")
     Optional<MemberEntity> findFetchById(@Param("memberId") Long memberId);
+  
+  
+    Optional<MemberEntity> findByRefreshToken(String refreshToken);
 }
