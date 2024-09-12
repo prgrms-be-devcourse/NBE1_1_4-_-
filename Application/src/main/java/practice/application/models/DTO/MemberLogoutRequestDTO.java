@@ -13,4 +13,7 @@ public class MemberLogoutRequestDTO {
     public MemberLogoutRequestDTO(String email) {
         this.email = email;
     }
+
+    public MemberLogoutRequestDTO() {
+    }
 }
