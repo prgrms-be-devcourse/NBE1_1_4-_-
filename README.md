@@ -25,17 +25,17 @@ Programmers DevCourse BE 1기 3팀의 1 차 프로젝트 repository 입니다.
         <td align="center" width="130px">
             <a href="https://github.com/kcsc2217"><img height="100px" width="100px" src="https://avatars.githubusercontent.com/kcsc2217 "/></a>
             <br />
-            <a href="https://github.com/uuccu"> 성원 </a>    
+            <a href="https://github.com/kcsc2217"> 성원 </a>    
         </td>
         <td align="center" width="130px">
             <a href="https://github.com/Leehunil"><img height="100px" width="100px" src="https://avatars.githubusercontent.com/Leehunil"/></a>
             <br />
-            <a href="https://github.com/Mungjin01"> 훈일 </a>    
+            <a href="https://github.com/Leehunil"> 훈일 </a>    
         </td>
         <td align="center" width="130px">
             <a href="https://github.com/InaJeong73"><img height="100px" width="100px" src="https://avatars.githubusercontent.com/InaJeong73 "/></a>
             <br />
-            <a href="https://github.com/Sikca"> 인아 </a>    
+            <a href="https://github.com/InaJeong73"> 인아 </a>    
         </td>
     </tr>
 </table>
