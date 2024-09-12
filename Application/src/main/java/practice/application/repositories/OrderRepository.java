@@ -21,6 +21,6 @@ public interface OrderRepository extends JpaRepository<OrderEntity, String> {
     @Query("select o from OrderEntity o where o.status = :status")
     Optional<List<OrderEntity>> findOrdersByStatus(@Param("status") OrderStatus status);
 
-    @Query("SELECT o FROM OrderEntity o WHERE o.member = :member AND o.status = : RESERVED")
+    @Query("SELECT o FROM OrderEntity o WHERE o.member = :member AND o.status = practice.application.models.enumType.OrderStatus.RESERVED")
     Optional<OrderEntity> findByMemberAndReservedStatus(MemberEntity member);
 }
