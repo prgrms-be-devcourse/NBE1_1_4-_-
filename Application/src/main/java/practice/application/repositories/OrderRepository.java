@@ -18,6 +18,9 @@ public interface OrderRepository extends JpaRepository<OrderEntity, String> {
     @Query("select distinct o FROM OrderEntity o join fetch o.ordersItemsList oi join fetch oi.product where o.id = :orderId")
     Optional<OrderEntity> findFetchById(@Param("orderId") String orderId);
 
+    @Query("select o from OrderEntity o where o.status = :status")
+    Optional<List<OrderEntity>> findOrdersByStatus(@Param("status") OrderStatus status);
+
     @Query("SELECT o FROM OrderEntity o WHERE o.member = :member AND o.status = : RESERVED")
     Optional<OrderEntity> findByMemberAndReservedStatus(MemberEntity member);
 }

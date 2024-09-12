@@ -5,6 +5,7 @@ import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 import practice.application.models.enumType.OrderStatus;
 
 import java.util.ArrayList;
@@ -25,6 +26,7 @@ public class OrderEntity extends BaseEntity{
 
     private String postCode;
 
+    @Setter
     private int sum = 0;
 
     @Enumerated(EnumType.STRING)
@@ -62,13 +64,24 @@ public class OrderEntity extends BaseEntity{
         this.status = OrderStatus.PAYMENT;
     }
 
-    public void orderCancel() {  //주문 취소 로직
-        this.status = OrderStatus.CANCELED;
 
+    public void orderCancel(){  //주문 취소 로직
+        this.status = OrderStatus.CANCELED;
+        int totalCancelAmount = 0;
         for(OrdersItemEntity ordersItem : ordersItemsList){
             int quantity = ordersItem.getQuantity();
+            int price = ordersItem.getPrice();
 
+            totalCancelAmount += price;
             ordersItem.getProduct().addQuantity(quantity);
         }
+
+        if (this.member != null) {
+            this.member.updateTotalAmountOnCancellation(totalCancelAmount);
+        }
+    }
+
+    public void changeStatusDelivered() {
+        this.status = OrderStatus.DELIVERED;
     }
 }

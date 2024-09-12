@@ -116,7 +116,6 @@ public class JwtUtil {
      * @param accessToken 엑세스 토큰
      * @return {@code User ID}
      */
-
     public Long getUserIdWithAccessToken(String accessToken) {
         return Long.valueOf(parseClaims(accessTokensecretKey, accessToken).get("memberId", String.class));
     }
@@ -139,6 +138,7 @@ public class JwtUtil {
     public boolean isAccessTokenExpired(String accessToken) {
         return isExpired(accessToken, accessTokensecretKey);
     }
+  
 
     /**
      * Refresh 토큰 기간 만료됬는지 확인하는 메서드.
@@ -200,6 +200,7 @@ public class JwtUtil {
                     .getExpiration()
                     .before(new Date());
             return true;
+
         }
         catch (io.jsonwebtoken.security.SecurityException | MalformedJwtException e) {
             log.info("Invalid JWT Token", e);

@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import practice.application.models.enumType.MembershipGrade;
 import practice.application.models.enumType.UserType;
 
 import java.util.ArrayList;
@@ -39,6 +40,8 @@ public class MemberEntity {
     @Embedded
     private Address address;
 
+    private int totalAmount = 0; // 현재까지 총 결제 금액
+
     // TODO [MemberEntity] Refresh Token 기능 구현 후 삭제해야 할 수도 있음.
     /**
      * @deprecated Refresh Token 기능 구현 후 삭제하는게 좋을 수도 있음.
@@ -69,9 +72,42 @@ public class MemberEntity {
         this.address = address;
     }
 
+    public MembershipGrade getGrade() {
+        if (this.totalAmount < 100000) {
+            return MembershipGrade.GOLD;
+        } else if (this.totalAmount < 500000) {
+            return MembershipGrade.VIP;
+        } else {
+            return MembershipGrade.VVIP;
+        }
+    }
+
+    public double applyDiscount(int originalPrice) {
+        MembershipGrade grade = getGrade();
+        switch (grade) {
+            case GOLD:
+                return originalPrice;
+            case VIP:
+                return originalPrice * 0.90; // 10% 할인
+            case VVIP:
+                return originalPrice * 0.80; // 20% 할인
+            default:
+                return originalPrice;
+        }
+    }
+
     public void encodePassword(String password){
         this.password = password;
     }
+
+    public void updateTotalAmount(int amount) {
+        this.totalAmount += amount;
+    }
+
+    public void updateTotalAmountOnCancellation(int amount) {
+        this.totalAmount -= amount;
+    }
+
 
     /**
      * Refresh Token 주입용 Setter
