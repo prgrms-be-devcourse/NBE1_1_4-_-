@@ -121,7 +121,7 @@ Programmers DevCourse BE 1기 3팀의 1 차 프로젝트 repository 입니다.
 그래서 아래 보시는 것처럼 로그인과 관련된 API 는 모두 허용하고, 그 외는 어느정도 권한이 필요하게 만들었습니다.
 
 <p align="center">
-    <img src="images/trouble-shooting-0.PNG" width=70% height=70%>
+    <img src="images/trouble-shooting-0.PNG" width=80% height=80%>
 </p>
 
 때문에 로그인 관련 API `/members/**` 는 어떠한 경우에도 권한 문제가 발생하지 않아야 합니다.
@@ -130,17 +130,17 @@ Programmers DevCourse BE 1기 3팀의 1 차 프로젝트 repository 입니다.
 
 
 <p align="center">
-    <img src="images/trouble-shooting-1.PNG" width=60% height=60%>
+    <img src="images/trouble-shooting-1.PNG" width=70% height=70%>
 </p>
 
 <p align="center">
-    <img src="images/trouble-shooting-2.PNG" width=70% height=70%>
+    <img src="images/trouble-shooting-2.PNG" width=80% height=80%>
 </p>
 
 문제의 원인은 `/member/logout` API 의 요청 `DTO` 때문이었습니다.
 
 <p align="center">
-    <img src="images/trouble-shooting-3.PNG" width=45% height=45%>
+    <img src="images/trouble-shooting-3.PNG" width=55% height=55%>
 </p>
 
 해당 `DTO` 에는 기본 생성자가 없어 JSON 파싱 시 에러가 발생하였습니다.
@@ -152,17 +152,17 @@ Programmers DevCourse BE 1기 3팀의 1 차 프로젝트 repository 입니다.
 
 
 <p align="center">
-    <img src="images/trouble-shooting-4.PNG" width=60% height=60%>
+    <img src="images/trouble-shooting-4.PNG" width=70% height=70%>
 </p>
 
 
 <p align="center">
-    <img src="images/trouble-shooting-5.PNG" width=45% height=45%>
+    <img src="images/trouble-shooting-5.PNG" width=55% height=55%>
 </p>
 
 
 <p align="center">
-    <img src="images/trouble-shooting-6.PNG" width=70% height=70%>
+    <img src="images/trouble-shooting-6.PNG" width=80% height=80%>
 </p>
 
 </details>
