@@ -109,7 +109,63 @@ Programmers DevCourse BE 1기 3팀의 1 차 프로젝트 repository 입니다.
 
 ### ⚠ 트러블 슈팅 경험
 
+#### `/member/logout` endpoint 에서 유저의 권한을 요구하는 에러 트러블 슈팅
 
+- 연관 이슈 : https://github.com/prgrms-be-devcourse/NBE1_1_4-children/issues/20
+- 해결 PR : https://github.com/prgrms-be-devcourse/NBE1_1_4-children/pull/21
+
+<details>
+<summary> 자세히 보기</summary>
+저희는 Access, Refresh 토큰을 이용한 인증을 기반으로 개발하였습니다.
+
+그래서 아래 보시는 것처럼 로그인과 관련된 API 는 모두 허용하고, 그 외는 어느정도 권한이 필요하게 만들었습니다.
+
+<p align="center">
+    <img src="images/trouble-shooting-0.PNG" width=70% height=70%>
+</p>
+
+때문에 로그인 관련 API `/members/**` 는 어떠한 경우에도 권한 문제가 발생하지 않아야 합니다.
+
+하지만 DB 의 Refresh 토큰을 없애는 `/memers/logout` API 를 확인하니 아래처럼 권한 문제가 발생하는 것을 확인했습니다.
+
+
+<p align="center">
+    <img src="images/trouble-shooting-1.PNG" width=60% height=60%>
+</p>
+
+<p align="center">
+    <img src="images/trouble-shooting-2.PNG" width=70% height=70%>
+</p>
+
+문제의 원인은 `/member/logout` API 의 요청 `DTO` 때문이었습니다.
+
+<p align="center">
+    <img src="images/trouble-shooting-3.PNG" width=45% height=45%>
+</p>
+
+해당 `DTO` 에는 기본 생성자가 없어 JSON 파싱 시 에러가 발생하였습니다.
+
+그런데 Spring Security 는 처리 중 에러가 발생하면  `/error` API 로 요청을 던져버리고, `/error` API 는 이전 `SecurityConfig` 에서 `authenticated` 로
+설정하여 권한 문제가 발생한 것입니다.
+
+이를 해결하기 위해 `DTO` 에 기본 생성자를 추가하였고, 추후 이처럼 `/error` 로 던져지는 경우를 잘 파악하고자 `/error` API 는 모든 요청이 접글할 수 있도록 수정하였습니다.
+
+
+<p align="center">
+    <img src="images/trouble-shooting-4.PNG" width=60% height=60%>
+</p>
+
+
+<p align="center">
+    <img src="images/trouble-shooting-5.PNG" width=45% height=45%>
+</p>
+
+
+<p align="center">
+    <img src="images/trouble-shooting-6.PNG" width=70% height=70%>
+</p>
+
+</details>
 
 
 
