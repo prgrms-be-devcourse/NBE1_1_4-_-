@@ -1,9 +1,8 @@
 package practice.application.models.enumType;
 
 public enum OrderStatus {
-
-    ORDER,
-    CANCEL,
-    DELIVERY
-
+    RESERVED,
+    PAYMENT,
+    CANCELED,
+    DELIVERED
 }

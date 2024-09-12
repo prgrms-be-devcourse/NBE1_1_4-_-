@@ -48,7 +48,7 @@ public class OrdersItemEntity extends BaseEntity {
         this.order = orderEntity;
     }
 
-    public OrdersItemEntity( int quantity,  ProductEntity product) {
+    public OrdersItemEntity( int quantity, ProductEntity product) {
         this.category = product.getCategory();
         this.quantity = quantity; //주문 수량
         this.price = calculatePrice(product);

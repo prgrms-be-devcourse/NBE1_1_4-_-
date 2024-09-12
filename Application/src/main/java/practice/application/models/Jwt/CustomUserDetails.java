@@ -9,8 +9,6 @@ import practice.application.models.MemberEntity;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
-import java.util.stream.Collectors;
 
 @Getter
 @RequiredArgsConstructor
@@ -27,9 +25,6 @@ public class CustomUserDetails implements UserDetails {
 
         return collection;
     }
-
-
-
 
     @Override
     public String getPassword() {
