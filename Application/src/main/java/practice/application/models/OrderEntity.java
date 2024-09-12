@@ -85,4 +85,3 @@ public class OrderEntity extends BaseEntity{
         this.status = OrderStatus.DELIVERED;
     }
 }
-}
